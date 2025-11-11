@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BiM-VFI - Nội suy khung hình video</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .card-header {
+            background-color: #6c757d;
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #4361ee;
+            border-color: #4361ee;
+        }
+        .btn-primary:hover {
+            background-color: #3a56d4;
+            border-color: #3a56d4;
+        }
+        .image-preview {
+            min-height: 150px;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+        }
+        #frames-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            padding: 10px 0;
+        }
+        .frame-item {
+            flex: 0 0 auto;
+            position: relative;
+        }
+        .frame-item img {
+            height: 120px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        #loading-indicator {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .footer {
+            margin-top: 40px;
+            padding: 20px 0;
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">BiM-VFI - Nội suy khung hình video</h1>
+        <p class="text-center mb-4">Tạo video mượt mà từ hai hình ảnh với công nghệ nội suy khung hình BiM-VFI</p>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Ảnh đầu vào</div>
+                    <div class="card-body">
+                        <form id="upload-form">
+                            <div class="mb-3">
+                                <label for="image1" class="form-label">Ảnh bắt đầu:</label>
+                                <input type="file" class="form-control" id="image1" name="image1" accept=".jpg,.jpeg,.png" required>
+                                <div class="image-preview" id="preview1"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="image2" class="form-label">Ảnh kết thúc:</label>
+                                <input type="file" class="form-control" id="image2" name="image2" accept=".jpg,.jpeg,.png" required>
+                                <div class="image-preview" id="preview2"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="model" class="form-label">Chọn model:</label>
+                                <select class="form-select" id="model" name="model">
+                                    <option value="pretrained" selected>Pretrained (Original)</option>
+                                    <option value="trained_400">Custom Trained (400 epochs)</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="frames" class="form-label">Số khung hình trung gian:</label>
+                                <select class="form-select" id="frames" name="frames">
+                                    <option value="8">8 khung hình (2^3)</option>
+                                    <option value="16" selected>16 khung hình (2^4)</option>
+                                    <option value="32">32 khung hình (2^5)</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Tạo video</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">Kết quả</div>
+                    <div class="card-body">
+                        <div id="result-container" style="display: none;">
+                            <div class="ratio ratio-16x9 mb-3">
+                                <video id="result-video" controls autoplay loop></video>
+                            </div>
+                            <a id="download-video" class="btn btn-success w-100 mb-3" download>Tải xuống video</a>
+                        </div>
+                        <div id="loading-indicator">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Đang xử lý...</span>
+                            </div>
+                            <p class="mt-2">Đang xử lý nội suy khung hình...</p>
+                        </div>
+                        <div id="placeholder" class="text-center">
+                            <img src="https://via.placeholder.com/400x225.png?text=BiM-VFI+Video+Demo" class="img-fluid rounded" alt="Placeholder">
+                            <p class="text-muted mt-2">Tải lên hai ảnh và nhấn "Tạo video" để bắt đầu</p>
+                        </div>
+                        <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4" id="frames-card" style="display: none;">
+            <div class="card-header">Các khung hình trung gian</div>
+            <div class="card-body">
+                <div id="frames-container"></div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">Giới thiệu về BiM-VFI</div>
+            <div class="card-body">
+                <p>BiM-VFI (Bilateral Motion-based Video Frame Interpolation) là một thuật toán nội suy khung hình tiên tiến sử dụng bilateral motion estimation để tạo ra các khung hình trung gian chất lượng cao.</p>
+                <p>Đặc điểm nổi bật:</p>
+                <ul>
+                    <li><strong>Bilateral Motion:</strong> Ước lượng chuyển động theo cả hai hướng (từ I0→It và It→I1)</li>
+                    <li><strong>BiMFN:</strong> Bilateral Motion Field Network để tính toán motion field chính xác</li>
+                    <li><strong>CAUN:</strong> Context-Aware Upsampling Network để nâng cấp độ phân giải flow</li>
+                    <li><strong>Synthesis Network:</strong> Kết hợp thông tin từ cả hai khung hình để tạo ra khung hình trung gian</li>
+                </ul>
+                <p><strong>Lựa chọn model:</strong></p>
+                <ul>
+                    <li><strong>Pretrained:</strong> Model gốc từ tác giả BiM-VFI</li>
+                    <li><strong>Custom Trained:</strong> Model do chúng tôi train lại trên dataset</li>
+                </ul>
+                <p>Phương pháp này sử dụng pyramid architecture và context-aware upsampling để tạo ra các khung hình trung gian với chất lượng cao và chuyển động mượt mà.</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <div class="container">
+            <p>BiM-VFI - Nội suy khung hình video | Phát triển dựa trên <a href="https://github.com/KAIST-VICLab/BiM-VFI" target="_blank" class="text-light">BiM-VFI</a></p>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('upload-form');
+            const image1Input = document.getElementById('image1');
+            const image2Input = document.getElementById('image2');
+            const preview1 = document.getElementById('preview1');
+            const preview2 = document.getElementById('preview2');
+            const resultContainer = document.getElementById('result-container');
+            const resultVideo = document.getElementById('result-video');
+            const downloadVideo = document.getElementById('download-video');
+            const framesContainer = document.getElementById('frames-container');
+            const framesCard = document.getElementById('frames-card');
+            const loadingIndicator = document.getElementById('loading-indicator');
+            const placeholder = document.getElementById('placeholder');
+            const errorMessage = document.getElementById('error-message');
+            
+            // Hiển thị ảnh preview
+            function showPreview(input, previewElement) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        previewElement.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+            
+            image1Input.addEventListener('change', function() {
+                showPreview(this, preview1);
+            });
+            
+            image2Input.addEventListener('change', function() {
+                showPreview(this, preview2);
+            });
+            
+            // Xử lý form submit
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Ẩn kết quả cũ và hiển thị loading
+                resultContainer.style.display = 'none';
+                framesCard.style.display = 'none';
+                placeholder.style.display = 'none';
+                errorMessage.style.display = 'none';
+                loadingIndicator.style.display = 'block';
+                
+                // Chuẩn bị form data
+                const formData = new FormData(form);
+                
+                // Gửi request
+                fetch('/interpolate', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(data => {
+                            throw new Error(data.error || 'Có lỗi xảy ra khi xử lý yêu cầu');
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Hiển thị kết quả
+                    loadingIndicator.style.display = 'none';
+                    resultContainer.style.display = 'block';
+                    
+                    // Cập nhật video
+                    resultVideo.src = data.video;
+                    downloadVideo.href = data.download_video;
+                    
+                    // Hiển thị các khung hình
+                    framesContainer.innerHTML = '';
+                    
+                    // Thêm ảnh gốc đầu tiên
+                    const firstFrameItem = document.createElement('div');
+                    firstFrameItem.className = 'frame-item';
+                    firstFrameItem.innerHTML = `<img src="${data.original1}" alt="Khung hình gốc 1">`;
+                    framesContainer.appendChild(firstFrameItem);
+                    
+                    // Thêm các khung hình trung gian
+                    data.frames.forEach((frame, index) => {
+                        const frameItem = document.createElement('div');
+                        frameItem.className = 'frame-item';
+                        frameItem.innerHTML = `<img src="${frame}" alt="Khung hình trung gian ${index + 1}">`;
+                        framesContainer.appendChild(frameItem);
+                    });
+                    
+                    // Thêm ảnh gốc cuối cùng
+                    const lastFrameItem = document.createElement('div');
+                    lastFrameItem.className = 'frame-item';
+                    lastFrameItem.innerHTML = `<img src="${data.original2}" alt="Khung hình gốc 2">`;
+                    framesContainer.appendChild(lastFrameItem);
+                    
+                    // Hiển thị card chứa các khung hình
+                    framesCard.style.display = 'block';
+                })
+                .catch(error => {
+                    // Hiển thị thông báo lỗi
+                    loadingIndicator.style.display = 'none';
+                    placeholder.style.display = 'block';
+                    errorMessage.textContent = error.message;
+                    errorMessage.style.display = 'block';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
