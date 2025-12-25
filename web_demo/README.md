@@ -39,7 +39,7 @@ pip install numpy
 1. Chạy web server:
 
 ```bash
-cd "web_demo"
+cd web_demo
 python app.py
 ```
 

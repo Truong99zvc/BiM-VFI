@@ -8,46 +8,79 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: #f8f9fa;
-            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 30px auto;
         }
         .card {
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             margin-bottom: 20px;
         }
         .card-header {
-            background-color: #6c757d;
+            background-color: #2c3e50;
             color: white;
-            border-radius: 10px 10px 0 0 !important;
-            font-weight: bold;
+            border-radius: 8px 8px 0 0 !important;
+            font-weight: 600;
+            padding: 15px 20px;
+        }
+        .nav-tabs {
+            border-bottom: 2px solid #dee2e6;
+        }
+        .nav-tabs .nav-link {
+            color: #495057;
+            border: none;
+            border-bottom: 3px solid transparent;
+            padding: 12px 24px;
+        }
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            color: #2c3e50;
+        }
+        .nav-tabs .nav-link.active {
+            color: #2c3e50;
+            background-color: transparent;
+            border-bottom-color: #2c3e50;
+            font-weight: 600;
         }
         .btn-primary {
-            background-color: #4361ee;
-            border-color: #4361ee;
+            background-color: #3498db;
+            border-color: #3498db;
+            padding: 10px 24px;
+            font-weight: 500;
         }
         .btn-primary:hover {
-            background-color: #3a56d4;
-            border-color: #3a56d4;
+            background-color: #2980b9;
+            border-color: #2980b9;
         }
-        .image-preview {
+        .btn-success {
+            background-color: #27ae60;
+            border-color: #27ae60;
+        }
+        .btn-success:hover {
+            background-color: #229954;
+            border-color: #229954;
+        }
+        .image-preview, .video-preview {
             min-height: 150px;
-            border: 2px dashed #ddd;
-            border-radius: 5px;
+            border: 2px dashed #bdc3c7;
+            border-radius: 6px;
             margin-top: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
+            background-color: #ecf0f1;
         }
-        .image-preview img {
+        .image-preview img, .video-preview video {
             max-width: 100%;
             max-height: 200px;
+            border-radius: 4px;
         }
-        #frames-container {
+        #frames-container, #samples-container {
             display: flex;
             overflow-x: auto;
             gap: 10px;
@@ -59,231 +92,564 @@
         }
         .frame-item img {
             height: 120px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
         }
-        #loading-indicator {
+        .loading-container {
             display: none;
             text-align: center;
-            margin: 20px 0;
+            margin: 30px 0;
+        }
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        .placeholder-text {
+            color: #7f8c8d;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .stat-item {
+            background-color: #ecf0f1;
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            word-break: break-word;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #7f8c8d;
+            margin-top: 5px;
+            line-height: 1.2;
         }
         .footer {
             margin-top: 40px;
             padding: 20px 0;
-            background-color: #343a40;
+            background-color: #2c3e50;
             color: white;
             text-align: center;
+        }
+        .footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        .gallery-item {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+        .gallery-item-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        .gallery-item-controls {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .gallery-videos-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .gallery-videos-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .gallery-video-wrapper {
+            position: relative;
+        }
+        .gallery-video-label {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(44, 62, 80, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 10;
+        }
+        .btn-sm {
+            padding: 5px 15px;
+            font-size: 13px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center mb-4">BiM-VFI - Nội suy khung hình video</h1>
-        <p class="text-center mb-4">Tạo video mượt mà từ hai hình ảnh với công nghệ nội suy khung hình BiM-VFI</p>
+        <h1 class="text-center mb-2">BiM-VFI - Video Frame Interpolation</h1>
+        <p class="text-center text-muted mb-4">Nội suy khung hình video với công nghệ BiM-VFI</p>
         
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">Ảnh đầu vào</div>
-                    <div class="card-body">
-                        <form id="upload-form">
-                            <div class="mb-3">
-                                <label for="image1" class="form-label">Ảnh bắt đầu:</label>
-                                <input type="file" class="form-control" id="image1" name="image1" accept=".jpg,.jpeg,.png" required>
-                                <div class="image-preview" id="preview1"></div>
+        <div class="card">
+            <div class="card-body p-0">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="image-tab" data-bs-toggle="tab" data-bs-target="#image-content" type="button" role="tab">Nội suy từ ảnh</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="video-tab" data-bs-toggle="tab" data-bs-target="#video-content" type="button" role="tab">Nội suy từ video</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="sequence-tab" data-bs-toggle="tab" data-bs-target="#sequence-content" type="button" role="tab">Nội suy từ chuỗi frames</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="comparison-tab" data-bs-toggle="tab" data-bs-target="#comparison-content" type="button" role="tab">So sánh video</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="gallery-tab" data-bs-toggle="tab" data-bs-target="#gallery-content" type="button" role="tab">Trưng bày</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content p-3">
+                    <!-- Tab nội suy từ ảnh -->
+                    <div class="tab-pane fade show active" id="image-content" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">Đầu vào</div>
+                                    <div class="card-body">
+                                        <form id="upload-form">
+                                            <div class="mb-3">
+                                                <label for="image1" class="form-label">Ảnh bắt đầu</label>
+                                                <input type="file" class="form-control" id="image1" name="image1" accept=".jpg,.jpeg,.png" required>
+                                                <div class="image-preview" id="preview1">
+                                                    <span class="text-muted">Chọn ảnh</span>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="image2" class="form-label">Ảnh kết thúc</label>
+                                                <input type="file" class="form-control" id="image2" name="image2" accept=".jpg,.jpeg,.png" required>
+                                                <div class="image-preview" id="preview2">
+                                                    <span class="text-muted">Chọn ảnh</span>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="model" class="form-label">Model</label>
+                                                <select class="form-select" id="model" name="model">
+                                                    <option value="pretrained" selected>Pretrained</option>
+                                                    <option value="trained_330">Reproduce (330 epochs)</option>
+                                                    <option value="bim-ifnet">BiM-IFnet (400 epochs)</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="frames" class="form-label">Số khung hình trung gian</label>
+                                                <select class="form-select" id="frames" name="frames">
+                                                    <option value="8">8 frames</option>
+                                                    <option value="16" selected>16 frames</option>
+                                                    <option value="32">32 frames</option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary w-100">Tạo video</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="image2" class="form-label">Ảnh kết thúc:</label>
-                                <input type="file" class="form-control" id="image2" name="image2" accept=".jpg,.jpeg,.png" required>
-                                <div class="image-preview" id="preview2"></div>
+                            
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">Kết quả</div>
+                                    <div class="card-body">
+                                        <div id="result-container" style="display: none;">
+                                            <div class="ratio ratio-16x9 mb-3">
+                                                <video id="result-video" controls autoplay loop></video>
+                                            </div>
+                                            <a id="download-video" class="btn btn-success w-100 mb-3" download>Tải xuống video</a>
+                                        </div>
+                                        <div id="loading-indicator" class="loading-container">
+                                            <div class="spinner-border text-primary" role="status"></div>
+                                            <p class="mt-3">Đang xử lý...</p>
+                                        </div>
+                                        <div id="placeholder" class="placeholder-text">
+                                            <p>Tải lên hai ảnh và nhấn "Tạo video" để bắt đầu</p>
+                                        </div>
+                                        <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="model" class="form-label">Chọn model:</label>
-                                <select class="form-select" id="model" name="model">
-                                    <option value="pretrained" selected>Pretrained (Original)</option>
-                                    <option value="trained_400">Custom Trained (400 epochs)</option>
-                                </select>
+                        </div>
+                        
+                        <div class="card mt-3" id="frames-card" style="display: none;">
+                            <div class="card-header">Các khung hình</div>
+                            <div class="card-body">
+                                <div id="frames-container"></div>
                             </div>
-                            <div class="mb-3">
-                                <label for="frames" class="form-label">Số khung hình trung gian:</label>
-                                <select class="form-select" id="frames" name="frames">
-                                    <option value="8">8 khung hình (2^3)</option>
-                                    <option value="16" selected>16 khung hình (2^4)</option>
-                                    <option value="32">32 khung hình (2^5)</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Tạo video</button>
-                        </form>
+                        </div>
                     </div>
-                </div>
-            </div>
-            
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">Kết quả</div>
-                    <div class="card-body">
-                        <div id="result-container" style="display: none;">
-                            <div class="ratio ratio-16x9 mb-3">
-                                <video id="result-video" controls autoplay loop></video>
+                    
+                    <!-- Tab nội suy từ video -->
+                    <div class="tab-pane fade" id="video-content" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">Đầu vào</div>
+                                    <div class="card-body">
+                                        <form id="upload-video-form">
+                                            <div class="mb-3">
+                                                <label for="input-video" class="form-label">Video đầu vào</label>
+                                                <input type="file" class="form-control" id="input-video" name="video" accept=".mp4,.avi,.mov,.mkv" required>
+                                                <div class="video-preview" id="video-preview">
+                                                    <span class="text-muted">Chọn video</span>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="video-model" class="form-label">Model</label>
+                                                <select class="form-select" id="video-model" name="model">
+                                                    <option value="pretrained" selected>Pretrained</option>
+                                                    <option value="trained_330">Reproduce (330 epochs)</option>
+                                                    <option value="bim-ifnet">BiM-IFnet (400 epochs)</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="interpolations" class="form-label">Số khung nội suy giữa mỗi cặp</label>
+                                                <select class="form-select" id="interpolations" name="interpolations">
+                                                    <option value="1">1 frame</option>
+                                                    <option value="2" selected>2 frames</option>
+                                                    <option value="4">4 frames</option>
+                                                    <option value="8">8 frames</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="fps" class="form-label">FPS video đầu ra</label>
+                                                <input type="number" class="form-control" id="fps" name="fps" value="30" min="1" max="120">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary w-100">Xử lý video</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                            <a id="download-video" class="btn btn-success w-100 mb-3" download>Tải xuống video</a>
-                        </div>
-                        <div id="loading-indicator">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Đang xử lý...</span>
+                            
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">Kết quả</div>
+                                    <div class="card-body">
+                                        <div id="video-result-container" style="display: none;">
+                                            <div class="ratio ratio-16x9 mb-3">
+                                                <video id="video-result-video" controls autoplay loop></video>
+                                            </div>
+                                            <a id="download-result-video" class="btn btn-success w-100 mb-3" download>Tải xuống video</a>
+                                            <div id="video-stats" class="stats-grid"></div>
+                                        </div>
+                                        <div id="video-loading-indicator" class="loading-container">
+                                            <div class="spinner-border text-primary" role="status"></div>
+                                            <p class="mt-3">Đang xử lý video... Vui lòng chờ</p>
+                                        </div>
+                                        <div id="video-placeholder" class="placeholder-text">
+                                            <p>Tải lên video và nhấn "Xử lý video" để bắt đầu</p>
+                                        </div>
+                                        <div id="video-error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+                                    </div>
+                                </div>
                             </div>
-                            <p class="mt-2">Đang xử lý nội suy khung hình...</p>
                         </div>
-                        <div id="placeholder" class="text-center">
-                            <img src="https://via.placeholder.com/400x225.png?text=BiM-VFI+Video+Demo" class="img-fluid rounded" alt="Placeholder">
-                            <p class="text-muted mt-2">Tải lên hai ảnh và nhấn "Tạo video" để bắt đầu</p>
+                        
+                        <div class="card mt-3" id="samples-card" style="display: none;">
+                            <div class="card-header">Khung hình mẫu</div>
+                            <div class="card-body">
+                                <div id="samples-container"></div>
+                            </div>
                         </div>
-                        <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+                    </div>
+                    
+                    <!-- Tab nội suy từ chuỗi frames -->
+                    <div class="tab-pane fade" id="sequence-content" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">Chức năng 1: Trích xuất frames từ video</div>
+                                    <div class="card-body">
+                                        <form id="extract-frames-form">
+                                            <div class="mb-3">
+                                                <label for="extract-video" class="form-label">Chọn video</label>
+                                                <input type="file" class="form-control" id="extract-video" accept=".mp4,.avi,.mov,.mkv" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary w-100">Trích xuất frames</button>
+                                        </form>
+                                        <div id="extract-result" class="mt-3" style="display: none;">
+                                            <div class="alert alert-success">
+                                                <strong>Thành công!</strong>
+                                                <div id="extract-info"></div>
+                                            </div>
+                                        </div>
+                                        <div id="extract-loading" class="loading-container">
+                                            <div class="spinner-border text-primary" role="status"></div>
+                                            <p class="mt-3">Đang trích xuất frames...</p>
+                                        </div>
+                                        <div id="extract-error" class="alert alert-danger mt-3" style="display: none;"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card">
+                                    <div class="card-header">Chức năng 2: Upload frames và nội suy</div>
+                                    <div class="card-body">
+                                        <form id="sequence-interpolate-form">
+                                            <div class="mb-3">
+                                                <label for="sequence-frames" class="form-label">Chọn nhiều frames</label>
+                                                <input type="file" class="form-control" id="sequence-frames" accept=".jpg,.jpeg,.png" multiple required>
+                                                <div class="form-text">Chọn ít nhất 2 frames. Frames sẽ được nội suy theo thứ tự đã chọn.</div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="sequence-model" class="form-label">Model</label>
+                                                <select class="form-select" id="sequence-model">
+                                                    <option value="pretrained" selected>Pretrained</option>
+                                                    <option value="trained_330">Reproduce (330 epochs)</option>
+                                                    <option value="bim-ifnet">BiM-IFnet (400 epochs)</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="sequence-interpolations" class="form-label">Số khung nội suy giữa mỗi cặp</label>
+                                                <select class="form-select" id="sequence-interpolations">
+                                                    <option value="1">1 frame</option>
+                                                    <option value="2" selected>2 frames</option>
+                                                    <option value="4">4 frames</option>
+                                                    <option value="8">8 frames</option>
+                                                </select>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="sequence-fps" class="form-label">FPS video đầu ra</label>
+                                                <input type="number" class="form-control" id="sequence-fps" value="30" min="1" max="120">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary w-100">Nội suy chuỗi frames</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">Kết quả</div>
+                                    <div class="card-body">
+                                        <div id="sequence-result-container" style="display: none;">
+                                            <div class="ratio ratio-16x9 mb-3">
+                                                <video id="sequence-result-video" controls autoplay loop></video>
+                                            </div>
+                                            <a id="download-sequence-video" class="btn btn-success w-100 mb-3" download>Tải xuống video</a>
+                                            <div id="sequence-stats" class="stats-grid"></div>
+                                        </div>
+                                        <div id="sequence-samples-card" style="display: none;">
+                                            <h6 class="mt-3">Frames mẫu</h6>
+                                            <div id="sequence-samples-container" class="d-flex overflow-auto gap-2 mt-2"></div>
+                                        </div>
+                                        <div id="sequence-loading" class="loading-container">
+                                            <div class="spinner-border text-primary" role="status"></div>
+                                            <p class="mt-3">Đang xử lý...</p>
+                                        </div>
+                                        <div id="sequence-placeholder" class="placeholder-text">
+                                            <p>Chọn chức năng bên trái để bắt đầu</p>
+                                        </div>
+                                        <div id="sequence-error" class="alert alert-danger mt-3" style="display: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab so sánh video -->
+                    <div class="tab-pane fade" id="comparison-content" role="tabpanel">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">Đầu vào</div>
+                                    <div class="card-body">
+                                        <form id="comparison-form">
+                                            <div class="mb-3">
+                                                <label for="compare-video1" class="form-label">Video 1 (Gốc)</label>
+                                                <input type="file" class="form-control" id="compare-video1" name="video1" accept=".mp4,.avi,.mov,.mkv" required>
+                                                <div class="video-preview" id="compare-preview1">
+                                                    <span class="text-muted">Chọn video gốc</span>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="compare-video2" class="form-label">Video 2 (Đã xử lý)</label>
+                                                <input type="file" class="form-control" id="compare-video2" name="video2" accept=".mp4,.avi,.mov,.mkv" required>
+                                                <div class="video-preview" id="compare-preview2">
+                                                    <span class="text-muted">Chọn video đã xử lý</span>
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="layout" class="form-label">Bố cục so sánh</label>
+                                                <select class="form-select" id="layout" name="layout">
+                                                    <option value="side-by-side" selected>Trái - Phải</option>
+                                                    <option value="top-bottom">Trên - Dưới</option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary w-100">So sánh video</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-header">So sánh video</div>
+                                    <div class="card-body">
+                                        <div id="comparison-result-container" style="display: none;">
+                                            <div id="comparison-videos-wrapper">
+                                                <!-- Videos sẽ được thêm vào đây bằng JavaScript -->
+                                            </div>
+                                            <div id="comparison-stats" class="stats-grid mt-3"></div>
+                                        </div>
+                                        <div id="comparison-loading-indicator" class="loading-container">
+                                            <div class="spinner-border text-primary" role="status"></div>
+                                            <p class="mt-3">Đang tải video...</p>
+                                        </div>
+                                        <div id="comparison-placeholder" class="placeholder-text">
+                                            <p>Tải lên hai video và chọn bố cục để so sánh</p>
+                                        </div>
+                                        <div id="comparison-error-message" class="alert alert-danger mt-3" style="display: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tab trưng bày -->
+                    <div class="tab-pane fade" id="gallery-content" role="tabpanel">
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header">Thêm video vào trưng bày</div>
+                                    <div class="card-body">
+                                        <form id="gallery-add-form">
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label for="gallery-video-original" class="form-label">Video gốc</label>
+                                                        <input type="file" class="form-control" id="gallery-video-original" name="original" accept=".mp4,.avi,.mov,.mkv" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label for="gallery-video-bimvfi" class="form-label">Video BiM-VFI pre-trained</label>
+                                                        <input type="file" class="form-control" id="gallery-video-bimvfi" name="bimvfi" accept=".mp4,.avi,.mov,.mkv" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label for="gallery-video-other" class="form-label">Video BiM-VFI reproduce (tùy chọn)</label>
+                                                        <input type="file" class="form-control" id="gallery-video-other" name="other" accept=".mp4,.avi,.mov,.mkv">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <div class="mb-3">
+                                                        <label for="gallery-title" class="form-label">Tiêu đề</label>
+                                                        <input type="text" class="form-control" id="gallery-title" name="title" placeholder="VD: Cảnh chuyển động nhanh" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="mb-3">
+                                                        <label for="gallery-layout" class="form-label">Bố cục hiển thị</label>
+                                                        <select class="form-select" id="gallery-layout" name="layout">
+                                                            <option value="row" selected>Hàng ngang</option>
+                                                            <option value="column">Cột dọc</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">&nbsp;</label>
+                                                        <button type="submit" class="btn btn-primary w-100">Thêm vào trưng bày</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="gallery-loading-indicator" class="loading-container">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <p class="mt-3">Đang tải video...</p>
+                        </div>
+                        
+                        <div id="gallery-error-message" class="alert alert-danger" style="display: none;"></div>
+                        
+                        <div id="gallery-container">
+                            <!-- Các bộ video sẽ được thêm vào đây -->
+                        </div>
+                        
+                        <div id="gallery-placeholder" class="placeholder-text">
+                            <p>Chưa có video nào trong trưng bày. Thêm video để bắt đầu!</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="card mt-4" id="frames-card" style="display: none;">
-            <div class="card-header">Các khung hình trung gian</div>
+        <div class="card">
+            <div class="card-header">Giới thiệu</div>
             <div class="card-body">
-                <div id="frames-container"></div>
-            </div>
-        </div>
-        
-        <div class="card mt-4">
-            <div class="card-header">Giới thiệu về BiM-VFI</div>
-            <div class="card-body">
-                <p>BiM-VFI (Bilateral Motion-based Video Frame Interpolation) là một thuật toán nội suy khung hình tiên tiến sử dụng bilateral motion estimation để tạo ra các khung hình trung gian chất lượng cao.</p>
-                <p>Đặc điểm nổi bật:</p>
+                <p><strong>BiM-VFI</strong> (Bidirectional Motion Fields-Guided Frame Interpolation for Video with Non-uniform Motions) là thuật toán nội suy khung hình tiên tiến sử dụng bidirectional motion estimation.</p>
+                <p><strong>Tính năng:</strong></p>
                 <ul>
-                    <li><strong>Bilateral Motion:</strong> Ước lượng chuyển động theo cả hai hướng (từ I0→It và It→I1)</li>
-                    <li><strong>BiMFN:</strong> Bilateral Motion Field Network để tính toán motion field chính xác</li>
-                    <li><strong>CAUN:</strong> Context-Aware Upsampling Network để nâng cấp độ phân giải flow</li>
-                    <li><strong>Synthesis Network:</strong> Kết hợp thông tin từ cả hai khung hình để tạo ra khung hình trung gian</li>
+                    <li><strong>Nội suy từ ảnh:</strong> Tạo video mượt mà từ hai ảnh tĩnh</li>
+                    <li><strong>Nội suy từ video:</strong> Tăng FPS video bằng cách thêm khung hình trung gian</li>
+                    <li><strong>So sánh video:</strong> Hiển thị hai video song song để so sánh chất lượng</li>
+                    <li><strong>Loại bỏ trùng lặp:</strong> Tự động phát hiện và loại bỏ khung hình giống nhau</li>
+                    <li><strong>Tùy chỉnh linh hoạt:</strong> Chọn model, số khung nội suy và FPS đầu ra</li>
                 </ul>
-                <p><strong>Lựa chọn model:</strong></p>
-                <ul>
-                    <li><strong>Pretrained:</strong> Model gốc từ tác giả BiM-VFI</li>
-                    <li><strong>Custom Trained:</strong> Model do chúng tôi train lại trên dataset</li>
-                </ul>
-                <p>Phương pháp này sử dụng pyramid architecture và context-aware upsampling để tạo ra các khung hình trung gian với chất lượng cao và chuyển động mượt mà.</p>
             </div>
         </div>
     </div>
     
     <footer class="footer">
         <div class="container">
-            <p>BiM-VFI - Nội suy khung hình video | Phát triển dựa trên <a href="https://github.com/KAIST-VICLab/BiM-VFI" target="_blank" class="text-light">BiM-VFI</a></p>
+            <p>BiM-VFI Video Frame Interpolation | Dựa trên <a href="https://github.com/KAIST-VICLab/BiM-VFI" target="_blank">BiM-VFI</a></p>
         </div>
     </footer>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('upload-form');
-            const image1Input = document.getElementById('image1');
-            const image2Input = document.getElementById('image2');
-            const preview1 = document.getElementById('preview1');
-            const preview2 = document.getElementById('preview2');
-            const resultContainer = document.getElementById('result-container');
-            const resultVideo = document.getElementById('result-video');
-            const downloadVideo = document.getElementById('download-video');
-            const framesContainer = document.getElementById('frames-container');
-            const framesCard = document.getElementById('frames-card');
-            const loadingIndicator = document.getElementById('loading-indicator');
-            const placeholder = document.getElementById('placeholder');
-            const errorMessage = document.getElementById('error-message');
-            
-            // Hiển thị ảnh preview
-            function showPreview(input, previewElement) {
-                if (input.files && input.files[0]) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        previewElement.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-                    };
-                    reader.readAsDataURL(input.files[0]);
-                }
-            }
-            
-            image1Input.addEventListener('change', function() {
-                showPreview(this, preview1);
-            });
-            
-            image2Input.addEventListener('change', function() {
-                showPreview(this, preview2);
-            });
-            
-            // Xử lý form submit
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Ẩn kết quả cũ và hiển thị loading
-                resultContainer.style.display = 'none';
-                framesCard.style.display = 'none';
-                placeholder.style.display = 'none';
-                errorMessage.style.display = 'none';
-                loadingIndicator.style.display = 'block';
-                
-                // Chuẩn bị form data
-                const formData = new FormData(form);
-                
-                // Gửi request
-                fetch('/interpolate', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(data => {
-                            throw new Error(data.error || 'Có lỗi xảy ra khi xử lý yêu cầu');
-                        });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Hiển thị kết quả
-                    loadingIndicator.style.display = 'none';
-                    resultContainer.style.display = 'block';
-                    
-                    // Cập nhật video
-                    resultVideo.src = data.video;
-                    downloadVideo.href = data.download_video;
-                    
-                    // Hiển thị các khung hình
-                    framesContainer.innerHTML = '';
-                    
-                    // Thêm ảnh gốc đầu tiên
-                    const firstFrameItem = document.createElement('div');
-                    firstFrameItem.className = 'frame-item';
-                    firstFrameItem.innerHTML = `<img src="${data.original1}" alt="Khung hình gốc 1">`;
-                    framesContainer.appendChild(firstFrameItem);
-                    
-                    // Thêm các khung hình trung gian
-                    data.frames.forEach((frame, index) => {
-                        const frameItem = document.createElement('div');
-                        frameItem.className = 'frame-item';
-                        frameItem.innerHTML = `<img src="${frame}" alt="Khung hình trung gian ${index + 1}">`;
-                        framesContainer.appendChild(frameItem);
-                    });
-                    
-                    // Thêm ảnh gốc cuối cùng
-                    const lastFrameItem = document.createElement('div');
-                    lastFrameItem.className = 'frame-item';
-                    lastFrameItem.innerHTML = `<img src="${data.original2}" alt="Khung hình gốc 2">`;
-                    framesContainer.appendChild(lastFrameItem);
-                    
-                    // Hiển thị card chứa các khung hình
-                    framesCard.style.display = 'block';
-                })
-                .catch(error => {
-                    // Hiển thị thông báo lỗi
-                    loadingIndicator.style.display = 'none';
-                    placeholder.style.display = 'block';
-                    errorMessage.textContent = error.message;
-                    errorMessage.style.display = 'block';
-                });
-            });
-        });
-    </script>
+    <!-- Modal cảnh báo SSIM -->
+    <div class="modal fade" id="ssimWarningModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-warning">
+                    <h5 class="modal-title">⚠️ Cảnh báo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="ssim-warning-message"></p>
+                    <div id="ssim-resize-info" style="display: none;" class="alert alert-info">
+                        <small><strong>Lưu ý:</strong> <span id="resize-details"></span></small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-warning" id="force-interpolate-btn">Tiếp tục xử lý</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
