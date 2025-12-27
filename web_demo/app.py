@@ -13,6 +13,7 @@ import warnings
 from skimage.metrics import structural_similarity as ssim
 import shutil
 import subprocess
+import time
 warnings.filterwarnings("ignore")
 
 # Thêm thư mục gốc vào đường dẫn
@@ -505,9 +506,15 @@ def interpolate():
     img0_path = os.path.join(app.config['UPLOAD_FOLDER'], f'{session_id}_0.png')
     img1_path = os.path.join(app.config['UPLOAD_FOLDER'], f'{session_id}_1.png')
     
+    # Bắt đầu đo thời gian tổng
+    total_start_time = time.time()
+    
     try:
+        # Đo thời gian upload/save
+        upload_start = time.time()
         image1.save(img0_path)
         image2.save(img1_path)
+        upload_time = time.time() - upload_start
         
         img0_bgr = cv2.imread(img0_path)
         img1_bgr = cv2.imread(img1_path)
@@ -537,6 +544,8 @@ def interpolate():
                 'resized_to': f"{min(w0,w1)}x{min(h0,h1)}" if need_resize else None
             })
         
+        # Đo thời gian preprocessing (resize)
+        preprocess_start = time.time()
         # Resize nếu cần
         if need_resize:
             img0_bgr, img1_bgr, final_w, final_h = resize_images_for_interpolation(img0_bgr, img1_bgr)
@@ -544,6 +553,7 @@ def interpolate():
             cv2.imwrite(img1_path, img1_bgr)
         else:
             final_h, final_w = img0_bgr.shape[:2]
+        preprocess_time = time.time() - preprocess_start
         
         num_frames = int(request.form.get('frames', 16))
         selected_model = request.form.get('model', 'pretrained')
@@ -551,13 +561,22 @@ def interpolate():
         if selected_model not in MODEL_PATHS:
             selected_model = 'pretrained'
         
+        # Đo thời gian load model
+        model_load_start = time.time()
         model = load_bim_vfi_model(selected_model)
+        model_load_time = time.time() - model_load_start
         
         if model is None:
             return jsonify({'error': f'Không thể load model: {selected_model}'}), 500
         
+        # Đo thời gian inference (quan trọng nhất)
+        inference_start = time.time()
         frames = generate_interpolation(model, img0_path, img1_path, num_frames)
-        
+        inference_time = time.time() - inference_start
+
+        # Đo thời gian postprocessing (save frames + create video)
+        postprocess_start = time.time()
+
         frame_paths = []
         for i, frame in enumerate(frames):
             frame_path = os.path.join(app.config['RESULT_FOLDER'], f'{session_id}_{i}.png')
@@ -587,6 +606,14 @@ def interpolate():
         if actual_path != video_path:
             os.rename(actual_path, video_path)
         convert_to_web_compatible(video_path)
+
+        postprocess_time = time.time() - postprocess_start
+
+        # Tính tổng thời gian
+        total_time = time.time() - total_start_time
+
+        # Tính FPS inference
+        fps_inference = num_frames / inference_time if inference_time > 0 else 0
         
         return jsonify({
             'success': True, 
@@ -596,7 +623,17 @@ def interpolate():
             'original1': os.path.join('static', 'uploads', f'{session_id}_0.png'),
             'original2': os.path.join('static', 'uploads', f'{session_id}_1.png'),
             'similarity': float(similarity),
-            'final_size': f"{w}x{h}"
+            'final_size': f"{w}x{h}",
+            'timing': {
+                'upload_time': round(upload_time, 3),
+                'preprocess_time': round(preprocess_time, 3),
+                'model_load_time': round(model_load_time, 3),
+                'inference_time': round(inference_time, 3),
+                'postprocess_time': round(postprocess_time, 3),
+                'total_time': round(total_time, 3),
+                'fps_inference': round(fps_inference, 2),
+                'time_per_frame': round(inference_time / num_frames, 3) if num_frames > 0 else 0
+            }
         })
     
     except Exception as e:
@@ -619,10 +656,16 @@ def interpolate_video():
         return jsonify({'error': 'Định dạng video không được hỗ trợ'}), 400
     
     session_id = str(uuid.uuid4())
+
+    # Bắt đầu đo thời gian tổng
+    total_start_time = time.time()
     
     try:
+        # Đo thời gian upload
+        upload_start = time.time()
         video_path = os.path.join(app.config['UPLOAD_FOLDER'], f'{session_id}_input.mp4')
         video_file.save(video_path)
+        upload_time = time.time() - upload_start
         
         num_interpolations = int(request.form.get('interpolations', 2))
         output_fps = int(request.form.get('fps', 30))
@@ -630,31 +673,43 @@ def interpolate_video():
         
         if selected_model not in MODEL_PATHS:
             selected_model = 'pretrained'
-        
+        # Đo thời gian load model
+        model_load_start = time.time()
         model = load_bim_vfi_model(selected_model)
+        model_load_time = time.time() - model_load_start
         
         if model is None:
             return jsonify({'error': f'Không thể load model: {selected_model}'}), 500
-        
+        # Đo thời gian extract frames
+        extract_start = time.time()
         print("Đang trích xuất frames từ video...")
         frames = extract_frames_from_video(video_path)
+        extract_time = time.time() - extract_start
         
         if len(frames) == 0:
             return jsonify({'error': 'Không thể trích xuất frames từ video'}), 400
         
         print(f"Đã trích xuất {len(frames)} frames")
-        
+
+        # Đo thời gian dedup
+        dedup_start = time.time()
         print("Đang loại bỏ frames trùng lặp...")
         unique_frames = remove_duplicate_frames(frames)
+        dedup_time = time.time() - dedup_start
         print(f"Còn lại {len(unique_frames)} frames sau khi loại bỏ trùng lặp")
         
         if len(unique_frames) < 2:
             return jsonify({'error': 'Video cần có ít nhất 2 khung hình khác nhau'}), 400
         
+        # Đo thời gian inference
+        inference_start = time.time()
         print(f"Đang nội suy với {num_interpolations} frames trung gian...")
         interpolated_frames = interpolate_video_frames(model, unique_frames, num_interpolations)
+        inference_time = time.time() - inference_start
         print(f"Đã tạo {len(interpolated_frames)} frames sau nội suy")
         
+        # Đo thời gian postprocess (tạo video)
+        postprocess_start = time.time()
         output_video_path = os.path.join(app.config['RESULT_FOLDER'], f'{session_id}_output.mp4')
         h, w = interpolated_frames[0].shape[:2]
         
@@ -679,7 +734,14 @@ def interpolate_video():
                 sample_path = os.path.join(app.config['RESULT_FOLDER'], f'{session_id}_sample_{idx}.png')
                 cv2.imwrite(sample_path, interpolated_frames[idx])
                 sample_paths.append(os.path.join('static', 'results', f'{session_id}_sample_{idx}.png'))
-        
+        postprocess_time = time.time() - postprocess_start
+
+        # Tính tổng thời gian
+        total_time = time.time() - total_start_time
+
+        # Tính số frame được nội suy (không tính frame gốc)
+        total_interpolated = len(interpolated_frames) - len(unique_frames)
+        fps_inference = total_interpolated / inference_time if inference_time > 0 else 0
         return jsonify({
             'success': True,
             'video': f'/video/{session_id}_output.mp4',
@@ -690,6 +752,17 @@ def interpolate_video():
                 'unique_frames': len(unique_frames),
                 'final_frames': len(interpolated_frames),
                 'fps': output_fps
+            },
+            'timing': {
+                'upload_time': round(upload_time, 3),
+                'model_load_time': round(model_load_time, 3),
+                'extract_time': round(extract_time, 3),
+                'dedup_time': round(dedup_time, 3),
+                'inference_time': round(inference_time, 3),
+                'postprocess_time': round(postprocess_time, 3),
+                'total_time': round(total_time, 3),
+                'fps_inference': round(fps_inference, 2),
+                'avg_time_per_pair': round(inference_time / (len(unique_frames) - 1), 3) if len(unique_frames) > 1 else 0
             }
         })
     

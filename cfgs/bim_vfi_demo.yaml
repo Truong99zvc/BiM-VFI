@@ -1,4 +1,4 @@
-exp_name: original
+exp_name: demo_other_1
 mode: demo
 resume: pretrained/bim_vfi.pth
 model:
@@ -11,7 +11,7 @@ model:
 demo_dataset:
   name: demo
   args:
-    root_path: ./assets/demo
+    root_path: C:/Users/ZVC/Downloads/Crucial/CS420/BiM-VFI/demo___
 
 
 max_epoch: 400

@@ -118,7 +118,14 @@ class Trainer(object):
                 self.train_loader, train_sampler = make_distributed_loader(
                     train_dataset, l['batch_size'], l['num_workers'], shuffle=True, drop_last=True)
                 self.dist_samplers.append(train_sampler)
-                self.cfgs['lr_scheduler']['args']['total_steps'] = len(self.train_loader) * self.cfgs['max_epoch']
+                
+               # Chỉ thêm total_steps nếu dùng one_cycle_lr
+                if cfgs['lr_scheduler']['name'] == 'one_cycle_lr':
+                    total_steps = len(self.train_loader) * self.cfgs['max_epoch']
+                    if 'args' not in cfgs['lr_scheduler']:
+                        cfgs['lr_scheduler']['args'] = {}
+                    cfgs['lr_scheduler']['args']['total_steps'] = total_steps
+                    self.log(f'Total training steps: {total_steps}')
 
             if cfgs.get('test_dataset') is not None:
                 test_dataset = datasets.make(cfgs['test_dataset'])

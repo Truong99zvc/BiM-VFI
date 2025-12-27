@@ -1,6 +1,6 @@
-exp_name: eval_after_train_50_epochs
+exp_name: eval_train_330_epochs
 mode: benchmark
-resume: C:/Users/ZVC/Downloads/Crucial/CS420/BiM-VFI/save/bim_vfi_train_bimvfi_triplet_train/checkpoints/model_best.pth
+resume: C:/Users/ZVC/Downloads/Crucial/CS420/BiM-VFI/save/bim_vfi_train_new__400_epochs_NEW/checkpoints/model_best.pth
 model:
   name: bim_vfi
   args:

@@ -13,6 +13,49 @@ $(document).ready(function() {
             preview.html('<span class="text-muted">Chọn ảnh</span>');
         }
     }
+
+    // Thêm hàm helper để format timing
+    function formatTiming(timing) {
+        if (!timing) return '';
+    
+        let html = '<div class="timing-info">';
+        html += '<h4>⏱️ Thời gian xử lý:</h4>';
+        html += '<table class="timing-table">';
+    
+        if (timing.upload_time !== undefined) {
+            html += `<tr><td>Upload:</td><td>${timing.upload_time}s</td></tr>`;
+        }
+        if (timing.model_load_time !== undefined) {
+            html += `<tr><td>Load model:</td><td>${timing.model_load_time}s</td></tr>`;
+        }
+        if (timing.extract_time !== undefined) {
+            html += `<tr><td>Trích xuất frames:</td><td>${timing.extract_time}s</td></tr>`;
+        }
+        if (timing.dedup_time !== undefined) {
+            html += `<tr><td>Loại bỏ trùng lặp:</td><td>${timing.dedup_time}s</td></tr>`;
+        }
+        if (timing.inference_time !== undefined) {
+            html += `<tr><td><strong>Inference:</strong></td><td><strong>${timing.inference_time}s</strong></td></tr>`;
+        }
+        if (timing.postprocess_time !== undefined) {
+            html += `<tr><td>Hậu xử lý:</td><td>${timing.postprocess_time}s</td></tr>`;
+        }
+        if (timing.total_time !== undefined) {
+            html += `<tr class="total-row"><td><strong>Tổng:</strong></td><td><strong>${timing.total_time}s</strong></td></tr>`;
+        }
+    
+        html += '</table>';
+    
+        // Thêm thông tin performance
+        html += '<div class="performance-info">';
+        if (timing.avg_time_per_pair !== undefined) {
+            html += `<span class="perf-badge">⚡ ${timing.avg_time_per_pair}s/cặp</span>`;
+        }
+        html += '</div>';
+    
+        html += '</div>';
+        return html;
+    }
     
     // Xem trước video
     function previewVideo(input, previewId) {
@@ -121,6 +164,13 @@ $(document).ready(function() {
                     
                     displayFrames(response.frames, response.original1, response.original2);
                     
+                    // Hiển thị thông tin timing
+                    if (response.timing) {
+                        $('#timing-info-container').html(formatTiming(response.timing)).show();
+                    } else {
+                        $('#timing-info-container').hide();
+                    }
+                    
                     // Hiển thị thông tin SSIM và resize nếu có
                     if (response.similarity !== undefined) {
                         console.log(`SSIM: ${response.similarity}, Kích thước: ${response.final_size}`);
@@ -185,6 +235,13 @@ $(document).ready(function() {
                 
                 displayVideoStats(response.stats);
                 displaySamples(response.samples);
+                
+                // Hiển thị thông tin timing
+                if (response.timing) {
+                    $('#video-timing-info-container').html(formatTiming(response.timing)).show();
+                } else {
+                    $('#video-timing-info-container').hide();
+                }
                 
                 $('#upload-video-form button[type="submit"]').prop('disabled', false);
             },
@@ -857,6 +914,13 @@ $(document).ready(function() {
                     statDiv.append($('<div class="stat-label">').text(item.label));
                     statsContainer.append(statDiv);
                 });
+                
+                // Hiển thị thông tin timing
+                if (response.timing) {
+                    $('#sequence-timing-info-container').html(formatTiming(response.timing)).show();
+                } else {
+                    $('#sequence-timing-info-container').hide();
+                }
                 
                 // Hiển thị samples
                 if (response.samples && response.samples.length > 0) {
