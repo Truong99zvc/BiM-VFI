@@ -50,7 +50,7 @@ class BaseModel:
 
         self.model_without_ddp = self.model
         if cfgs['distributed']:
-            self.model = torch.nn.parallel.DistributedDataParallel(self.model, device_ids=[cfgs['gpu']])
+            self.model = torch.nn.parallel.DistributedDataParallel(self.model, device_ids=[cfgs['gpu']], find_unused_parameters=True)
             self.model_without_ddp = self.model.module
         if self.cfgs['mode'] == 'train':
             self.optimizer = make_optimizer(self.model_without_ddp.parameters(), self.cfgs['optimizer'])
