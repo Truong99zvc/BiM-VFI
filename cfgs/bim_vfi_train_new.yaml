@@ -10,21 +10,21 @@ model:
 train_dataset:
   name: vimeo
   args:
-    root_path: C:/Users/ZVC/Downloads/Crucial/CS420/BiM-VFI/data/vimeo_triplet
+    root_path: ../data/vimeo_triplet
     split: train
     patch_size: 128        # ↓ nhỏ hơn 256 để giảm VRAM
   loader:
-    batch_size: 4          # ↓ 4 ảnh/iter cho GPU 4 GB
-    num_workers: 2         # ↓ để tránh quá tải CPU
+    batch_size: 32          # ↓ 4 ảnh/iter cho GPU 4 GB
+    num_workers: 8         # ↓ để tránh quá tải CPU
 
 test_dataset:
   name: vimeo
   args:
-    root_path: C:/Users/ZVC/Downloads/Crucial/CS420/BiM-VFI/data/vimeo_triplet
+    root_path: ../data/vimeo_triplet
     split: val
   loader:
-    batch_size: 4
-    num_workers: 2
+    batch_size: 32
+    num_workers: 8
   save_imgs: False
 
 optimizer:
@@ -49,7 +49,7 @@ loss:
   - { name: flow_teacher_reg,     args: { weight: 0.005, gamma: 0.5 } }
   - { name: flow_smooth_tea1,     args: { weight: 0.05, gamma: 0.5, weight_type: gaussian, edge_constant: 150 } }
 
-max_epoch: 400              
+max_epoch: 1              
 validate_every: 10          # Validate 10 epoch/lần
 save_every: 10              # Lưu checkpoint 10 epoch/lần
 vis_every: 10               # Không cần visualize (giảm thời gian)
