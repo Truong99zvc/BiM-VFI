@@ -49,7 +49,7 @@ loss:
   - { name: flow_teacher_reg,     args: { weight: 0.005, gamma: 0.5 } }
   - { name: flow_smooth_tea1,     args: { weight: 0.05, gamma: 0.5, weight_type: gaussian, edge_constant: 150 } }
 
-max_epoch: 1              
+max_epoch: 23              
 validate_every: 10          # Validate 10 epoch/lần
 save_every: 10              # Lưu checkpoint 10 epoch/lần
 vis_every: 10               # Không cần visualize (giảm thời gian)
