@@ -254,7 +254,6 @@
                                                 <select class="form-select" id="model" name="model">
                                                     <option value="pretrained" selected>Pretrained</option>
                                                     <option value="trained_330">Reproduce (330 epochs)</option>
-                                                    <option value="bim-ifnet">BiM-IFnet (400 epochs)</option>
                                                 </select>
                                             </div>
                                             <div class="mb-3">
@@ -324,7 +323,6 @@
                                                 <select class="form-select" id="video-model" name="model">
                                                     <option value="pretrained" selected>Pretrained</option>
                                                     <option value="trained_330">Reproduce (330 epochs)</option>
-                                                    <option value="bim-ifnet">BiM-IFnet (400 epochs)</option>
                                                 </select>
                                             </div>
                                             <div class="mb-3">
@@ -339,6 +337,12 @@
                                             <div class="mb-3">
                                                 <label for="fps" class="form-label">FPS video đầu ra</label>
                                                 <input type="number" class="form-control" id="fps" name="fps" value="30" min="1" max="120">
+                                            </div>
+                                            <div class="form-check mb-3">
+                                                <input class="form-check-input" type="checkbox" value="" id="video-side-by-side">
+                                                <label class="form-check-label" for="video-side-by-side">
+                                                    Hiển thị Side-by-side (Original vs Interpolated)
+                                                </label>
                                             </div>
                                             <button type="submit" class="btn btn-primary w-100">Xử lý video</button>
                                         </form>
@@ -422,7 +426,6 @@
                                                 <select class="form-select" id="sequence-model">
                                                     <option value="pretrained" selected>Pretrained</option>
                                                     <option value="trained_330">Reproduce (330 epochs)</option>
-                                                    <option value="bim-ifnet">BiM-IFnet (400 epochs)</option>
                                                 </select>
                                             </div>
                                             <div class="mb-3">
@@ -557,7 +560,7 @@
                                                 </div>
                                                 <div class="col-md-4">
                                                     <div class="mb-3">
-                                                        <label for="gallery-video-other" class="form-label">Video BiM-VFI reproduce (tùy chọn)</label>
+                                                        <label for="gallery-video-other" class="form-label">Video BiM-RNet</label>
                                                         <input type="file" class="form-control" id="gallery-video-other" name="other" accept=".mp4,.avi,.mov,.mkv">
                                                     </div>
                                                 </div>

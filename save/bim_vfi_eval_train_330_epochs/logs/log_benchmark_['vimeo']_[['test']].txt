@@ -1,0 +1,440 @@
+[11-03 10:18:35] Model: BiMVFI(
+  (mfe): ResNetPyramid(
+    (conv): Conv2d(3, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (layer0): Sequential(
+      (0): BasicBlock(
+        (bn1): InstanceNorm2d(32, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv1): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.01, inplace=True)
+        (bn2): InstanceNorm2d(32, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv2): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+    )
+    (layer1): Sequential(
+      (0): Conv2d(32, 64, kernel_size=(2, 2), stride=(2, 2))
+      (1): BasicBlock(
+        (bn1): InstanceNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.01, inplace=True)
+        (bn2): InstanceNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+    )
+    (layer2): Sequential(
+      (0): Conv2d(64, 128, kernel_size=(2, 2), stride=(2, 2))
+      (1): BasicBlock(
+        (bn1): InstanceNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.01, inplace=True)
+        (bn2): InstanceNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+    )
+    (conv_last): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  )
+  (cfe): ResNetPyramid(
+    (conv): Conv2d(3, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (layer0): Sequential(
+      (0): BasicBlock(
+        (bn1): InstanceNorm2d(32, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv1): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.01, inplace=True)
+        (bn2): InstanceNorm2d(32, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv2): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+    )
+    (layer1): Sequential(
+      (0): Conv2d(32, 64, kernel_size=(2, 2), stride=(2, 2))
+      (1): BasicBlock(
+        (bn1): InstanceNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.01, inplace=True)
+        (bn2): InstanceNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+    )
+    (layer2): Sequential(
+      (0): Conv2d(64, 128, kernel_size=(2, 2), stride=(2, 2))
+      (1): BasicBlock(
+        (bn1): InstanceNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.01, inplace=True)
+        (bn2): InstanceNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+    )
+    (conv_last): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  )
+  (bimfn): BiMFN(
+    (conv_flow): Sequential(
+      (0): Conv2d(2, 64, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3))
+      (1): PReLU(num_parameters=64)
+      (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): PReLU(num_parameters=64)
+    )
+    (conv_occ): Sequential(
+      (0): Conv2d(1, 64, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3))
+      (1): PReLU(num_parameters=64)
+      (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): PReLU(num_parameters=64)
+    )
+    (conv_corr): Sequential(
+      (0): LeakyReLU(negative_slope=0.1)
+      (1): Conv2d(81, 64, kernel_size=(1, 1), stride=(1, 1))
+      (2): PReLU(num_parameters=64)
+      (3): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (4): PReLU(num_parameters=64)
+    )
+    (conv0): Sequential(
+      (0): Conv2d(576, 384, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=384)
+      (2): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (conv1): Sequential(
+      (0): Conv2d(384, 256, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=256)
+      (2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (conv2): Sequential(
+      (0): Conv2d(256, 192, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=192)
+      (2): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (conv3): Sequential(
+      (0): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=192)
+      (2): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (dem): Sequential(
+      (0): Conv2d(1, 128, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=128)
+      (2): Conv2d(128, 192, kernel_size=(1, 1), stride=(1, 1))
+    )
+    (aem): Sequential(
+      (0): Conv2d(2, 128, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=128)
+      (2): Conv2d(128, 192, kernel_size=(1, 1), stride=(1, 1))
+    )
+    (bim_mconv): BiMMConv(
+      (conv_FV): Sequential(
+        (0): LayerNorm()
+        (1): ResBlock(
+          (conv1): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+          (act): LeakyReLU(negative_slope=0.01)
+          (conv2): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+        )
+      )
+      (conv_r): Sequential(
+        (0): LayerNorm()
+        (1): ResBlock(
+          (conv1): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+          (act): LeakyReLU(negative_slope=0.01)
+          (conv2): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+        )
+      )
+      (conv_phi): Sequential(
+        (0): LayerNorm()
+        (1): ResBlock(
+          (conv1): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+          (act): LeakyReLU(negative_slope=0.01)
+          (conv2): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+        )
+      )
+    )
+    (conv_out): Sequential(
+      (0): Conv2d(192, 128, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=128)
+      (2): Conv2d(128, 4, kernel_size=(1, 1), stride=(1, 1))
+    )
+  )
+  (sn): SynthesisNetwork(
+    (conv_down1): Sequential(
+      (0): Conv2d(7, 32, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3))
+      (1): PReLU(num_parameters=32)
+      (2): Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): PReLU(num_parameters=64)
+    )
+    (conv_down2): Sequential(
+      (0): Conv2d(128, 64, kernel_size=(2, 2), stride=(2, 2))
+      (1): PReLU(num_parameters=64)
+      (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): PReLU(num_parameters=64)
+      (4): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (5): PReLU(num_parameters=64)
+    )
+    (conv_down3): Sequential(
+      (0): Conv2d(192, 128, kernel_size=(2, 2), stride=(2, 2))
+      (1): PReLU(num_parameters=128)
+      (2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): PReLU(num_parameters=128)
+      (4): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (5): PReLU(num_parameters=128)
+    )
+    (conv_up1): Sequential(
+      (0): Conv2d(384, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PixelShuffle(upscale_factor=2)
+      (2): PReLU(num_parameters=64)
+      (3): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (4): PReLU(num_parameters=64)
+    )
+    (conv_up2): Sequential(
+      (0): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PixelShuffle(upscale_factor=2)
+      (2): PReLU(num_parameters=32)
+      (3): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (4): PReLU(num_parameters=32)
+    )
+    (conv_up3): Sequential(
+      (0): Conv2d(96, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PReLU(num_parameters=64)
+      (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): PReLU(num_parameters=64)
+    )
+    (conv_out): Conv2d(64, 4, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  )
+  (caun): CAUN(
+    (enc0): Sequential(
+      (0): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PReLU(num_parameters=128)
+    )
+    (enc1): Sequential(
+      (0): Conv2d(160, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PReLU(num_parameters=128)
+    )
+    (enc2): Sequential(
+      (0): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PReLU(num_parameters=32)
+    )
+    (kernel_x2): Sequential(
+      (0): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PReLU(num_parameters=64)
+      (2): Conv2d(64, 18, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (kernel_x4): Sequential(
+      (0): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PReLU(num_parameters=32)
+      (2): Conv2d(32, 18, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+  )
+)
+[11-03 10:18:36] Chekpoint loaded successfully from C:/Users/ZVC/Downloads/Crucial/CS420/BiM-VFI/save/bim_vfi_train_new__400_epochs_NEW/checkpoints/model_best.pth at epoch: 300 and iteration: 300
+[11-03 10:18:36] Model: BiMVFI(
+  (mfe): ResNetPyramid(
+    (conv): Conv2d(3, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (layer0): Sequential(
+      (0): BasicBlock(
+        (bn1): InstanceNorm2d(32, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv1): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.01, inplace=True)
+        (bn2): InstanceNorm2d(32, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv2): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+    )
+    (layer1): Sequential(
+      (0): Conv2d(32, 64, kernel_size=(2, 2), stride=(2, 2))
+      (1): BasicBlock(
+        (bn1): InstanceNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.01, inplace=True)
+        (bn2): InstanceNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+    )
+    (layer2): Sequential(
+      (0): Conv2d(64, 128, kernel_size=(2, 2), stride=(2, 2))
+      (1): BasicBlock(
+        (bn1): InstanceNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.01, inplace=True)
+        (bn2): InstanceNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+    )
+    (conv_last): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  )
+  (cfe): ResNetPyramid(
+    (conv): Conv2d(3, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (layer0): Sequential(
+      (0): BasicBlock(
+        (bn1): InstanceNorm2d(32, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv1): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.01, inplace=True)
+        (bn2): InstanceNorm2d(32, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv2): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+    )
+    (layer1): Sequential(
+      (0): Conv2d(32, 64, kernel_size=(2, 2), stride=(2, 2))
+      (1): BasicBlock(
+        (bn1): InstanceNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.01, inplace=True)
+        (bn2): InstanceNorm2d(64, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+    )
+    (layer2): Sequential(
+      (0): Conv2d(64, 128, kernel_size=(2, 2), stride=(2, 2))
+      (1): BasicBlock(
+        (bn1): InstanceNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv1): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (lrelu): LeakyReLU(negative_slope=0.01, inplace=True)
+        (bn2): InstanceNorm2d(128, eps=1e-05, momentum=0.1, affine=False, track_running_stats=False)
+        (conv2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      )
+    )
+    (conv_last): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  )
+  (bimfn): BiMFN(
+    (conv_flow): Sequential(
+      (0): Conv2d(2, 64, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3))
+      (1): PReLU(num_parameters=64)
+      (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): PReLU(num_parameters=64)
+    )
+    (conv_occ): Sequential(
+      (0): Conv2d(1, 64, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3))
+      (1): PReLU(num_parameters=64)
+      (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): PReLU(num_parameters=64)
+    )
+    (conv_corr): Sequential(
+      (0): LeakyReLU(negative_slope=0.1)
+      (1): Conv2d(81, 64, kernel_size=(1, 1), stride=(1, 1))
+      (2): PReLU(num_parameters=64)
+      (3): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (4): PReLU(num_parameters=64)
+    )
+    (conv0): Sequential(
+      (0): Conv2d(576, 384, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=384)
+      (2): Conv2d(384, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (conv1): Sequential(
+      (0): Conv2d(384, 256, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=256)
+      (2): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (conv2): Sequential(
+      (0): Conv2d(256, 192, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=192)
+      (2): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (conv3): Sequential(
+      (0): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=192)
+      (2): Conv2d(192, 192, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (dem): Sequential(
+      (0): Conv2d(1, 128, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=128)
+      (2): Conv2d(128, 192, kernel_size=(1, 1), stride=(1, 1))
+    )
+    (aem): Sequential(
+      (0): Conv2d(2, 128, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=128)
+      (2): Conv2d(128, 192, kernel_size=(1, 1), stride=(1, 1))
+    )
+    (bim_mconv): BiMMConv(
+      (conv_FV): Sequential(
+        (0): LayerNorm()
+        (1): ResBlock(
+          (conv1): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+          (act): LeakyReLU(negative_slope=0.01)
+          (conv2): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+        )
+      )
+      (conv_r): Sequential(
+        (0): LayerNorm()
+        (1): ResBlock(
+          (conv1): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+          (act): LeakyReLU(negative_slope=0.01)
+          (conv2): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+        )
+      )
+      (conv_phi): Sequential(
+        (0): LayerNorm()
+        (1): ResBlock(
+          (conv1): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+          (act): LeakyReLU(negative_slope=0.01)
+          (conv2): Conv2d(192, 192, kernel_size=(1, 1), stride=(1, 1))
+        )
+      )
+    )
+    (conv_out): Sequential(
+      (0): Conv2d(192, 128, kernel_size=(1, 1), stride=(1, 1))
+      (1): PReLU(num_parameters=128)
+      (2): Conv2d(128, 4, kernel_size=(1, 1), stride=(1, 1))
+    )
+  )
+  (sn): SynthesisNetwork(
+    (conv_down1): Sequential(
+      (0): Conv2d(7, 32, kernel_size=(7, 7), stride=(1, 1), padding=(3, 3))
+      (1): PReLU(num_parameters=32)
+      (2): Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): PReLU(num_parameters=64)
+    )
+    (conv_down2): Sequential(
+      (0): Conv2d(128, 64, kernel_size=(2, 2), stride=(2, 2))
+      (1): PReLU(num_parameters=64)
+      (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): PReLU(num_parameters=64)
+      (4): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (5): PReLU(num_parameters=64)
+    )
+    (conv_down3): Sequential(
+      (0): Conv2d(192, 128, kernel_size=(2, 2), stride=(2, 2))
+      (1): PReLU(num_parameters=128)
+      (2): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): PReLU(num_parameters=128)
+      (4): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (5): PReLU(num_parameters=128)
+    )
+    (conv_up1): Sequential(
+      (0): Conv2d(384, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PixelShuffle(upscale_factor=2)
+      (2): PReLU(num_parameters=64)
+      (3): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (4): PReLU(num_parameters=64)
+    )
+    (conv_up2): Sequential(
+      (0): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PixelShuffle(upscale_factor=2)
+      (2): PReLU(num_parameters=32)
+      (3): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (4): PReLU(num_parameters=32)
+    )
+    (conv_up3): Sequential(
+      (0): Conv2d(96, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PReLU(num_parameters=64)
+      (2): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (3): PReLU(num_parameters=64)
+    )
+    (conv_out): Conv2d(64, 4, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+  )
+  (caun): CAUN(
+    (enc0): Sequential(
+      (0): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PReLU(num_parameters=128)
+    )
+    (enc1): Sequential(
+      (0): Conv2d(160, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PReLU(num_parameters=128)
+    )
+    (enc2): Sequential(
+      (0): Conv2d(96, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PReLU(num_parameters=32)
+    )
+    (kernel_x2): Sequential(
+      (0): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PReLU(num_parameters=64)
+      (2): Conv2d(64, 18, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+    (kernel_x4): Sequential(
+      (0): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+      (1): PReLU(num_parameters=32)
+      (2): Conv2d(32, 18, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    )
+  )
+)
+[11-03 10:43:14] Averaged validate stats:psnr: 29.915097336489204  ssim: 0.9253991748418586  lpips: 0.07532774998635519  stlpips: 0.06495631318917376  niqe: 5.3313754077969016

@@ -1,0 +1,36 @@
+exp_name: eval_pretrained_bim_vfi
+mode: benchmark
+resume: C:/Users/ZVC/Downloads/Crucial/CS420/BiM-VFI/pretrained/bim_vfi.pth
+model:
+  name: bim_vfi
+  args:
+    pyr_level: 3
+    feat_channels: 32
+benchmark_dataset:
+  name:
+  - vimeo
+  args:
+    root_path:
+    - C:\Users\ZVC\Downloads\Crucial\CS420\BiM-VFI\data\vimeo_triplet
+    split:
+    - - test
+    pyr_level:
+    - 3
+  save_imgs: false
+max_epoch: 1
+seed: 1234
+dist_url: env://
+env:
+  exp_name: bim_vfi_eval_pretrained_bim_vfi
+  save_dir: save\bim_vfi_eval_pretrained_bim_vfi
+  tot_gpus: 1
+  cudnn: false
+  port: '29600'
+  wandb_upload: false
+summary_dir: save\bim_vfi_eval_pretrained_bim_vfi\summaries
+checkpoint_dir: save\bim_vfi_eval_pretrained_bim_vfi\checkpoints
+output_dir: save\bim_vfi_eval_pretrained_bim_vfi\output
+log_dir: save\bim_vfi_eval_pretrained_bim_vfi\logs
+cfg_dir: save\bim_vfi_eval_pretrained_bim_vfi\cfgs
+run_description: benchmark_['vimeo']_[['test']]
+distributed: false

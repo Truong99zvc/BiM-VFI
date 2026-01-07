@@ -16,8 +16,6 @@ from modules.models import make, register
 
 
 @register('bim_vfi')
-@register('bim_ifnet')
-@register('bim_rnet')
 class BiMVFI(BaseModel):
     def __init__(self, cfg):
         super(BiMVFI, self).__init__(cfg)

@@ -5,6 +5,7 @@ import uuid
 import cv2
 import numpy as np
 from flask import Flask, render_template, request, jsonify, send_from_directory
+from werkzeug.utils import secure_filename
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -54,7 +55,6 @@ if torch.cuda.is_available():
 MODEL_PATHS = {
     'pretrained': os.path.join(project_root, 'pretrained', 'bim_vfi.pth'),
     'trained_330': os.path.join(project_root, 'save', 'bim_vfi_train_new__400_epochs_NEW', 'checkpoints', 'model_best.pth'),
-    'bim-ifnet': os.path.join(project_root, 'save', 'bim_vfi_train_new__400_epochs_NEW', 'checkpoints', 'bim-ifnet.pth'),
 }
 
 # Dictionary để lưu trữ các models đã load
@@ -69,7 +69,7 @@ class ModelArgs:
 def load_bim_vfi_model(model_key):
     """
     Load model dựa trên key (tên loại model).
-    model_key: 'pretrained', 'trained_330', hoặc 'bim-ifnet'
+    model_key: 'pretrained' hoặc 'trained_330'
     """
     model_path = MODEL_PATHS.get(model_key)
     if not model_path:
@@ -81,36 +81,24 @@ def load_bim_vfi_model(model_key):
         return loaded_models[model_key]
     print(f"Đang khởi tạo model: {model_key}...")
 
-    # --- LOGIC CHỌN KIẾN TRÚC ---
-    if model_key == 'bim-ifnet':
-        # 1. Nếu là Model Lai -> Load class BiM_IFNet
-        try:
-            args = ModelArgs(pyr_level=3, feat_channels=32)
-            model = BiM_IFNet(args)
-            print("-> Đã khởi tạo kiến trúc BiM-IFNet (Hybrid)")
-        except Exception as e:
-            print(f"Lỗi khi khởi tạo BiM_IFNet: {e}")
-            return None
-    else:
-        # 2. Nếu là Model Gốc (Pretrained / Reproduced) -> Dùng make_components cũ
-        model_cfg = {
-            'name': 'bim_vfi', # Tên registered trong code gốc
-            'args': {
-                'pyr_level': 3,
-                'feat_channels': 32
-            }
+    # Tất cả các model đều dùng kiến trúc BiM-VFI gốc
+    model_cfg = {
+        'name': 'bim_vfi',
+        'args': {
+            'pyr_level': 3,
+            'feat_channels': 32
         }
-        try:
-            model = make_components(model_cfg)
-            print("-> Đã khởi tạo kiến trúc BiM-VFI (Gốc)")
-        except Exception as e:
-            print(f"Lỗi khi khởi tạo BiM-VFI gốc: {e}")
-            return None
+    }
+    try:
+        model = make_components(model_cfg)
+        print("-> Đã khởi tạo kiến trúc BiM-VFI")
+    except Exception as e:
+        print(f"Lỗi khi khởi tạo BiM-VFI: {e}")
+        return None
     
     # --- LOAD TRỌNG SỐ (WEIGHTS) ---
     if os.path.exists(model_path):
         try:
-            # weights_only=False để tránh warning với pickle phức tạp, hoặc True nếu chỉ lưu state_dict đơn giản
             checkpoint = torch.load(model_path, map_location='cpu', weights_only=False) 
             
             # Xử lý các trường hợp lưu checkpoint khác nhau
@@ -128,7 +116,7 @@ def load_bim_vfi_model(model_key):
                 new_state_dict[name] = v
             
             # Load vào model
-            model.load_state_dict(new_state_dict, strict=False) # strict=False để linh hoạt hơn nếu thừa thiếu key nhỏ
+            model.load_state_dict(new_state_dict, strict=False)
             print(f"-> Đã tải trọng số từ: {model_path}")
             
         except Exception as e:
@@ -136,12 +124,11 @@ def load_bim_vfi_model(model_key):
             return None
     else:
         print(f"Cảnh báo: Không tìm thấy file checkpoint tại: {model_path}")
-        # Vẫn trả về model (random weights) hoặc None tùy bạn, ở đây mình trả về None cho an toàn
         return None
     
     model.to(device)
     model.eval()
-    loaded_models[model_key] = model # Lưu cache theo key
+    loaded_models[model_key] = model
     return model
 
 # Load model mặc định (ví dụ pretrained) khi khởi động app
@@ -644,27 +631,30 @@ def interpolate():
 
 @app.route('/interpolate_video', methods=['POST'])
 def interpolate_video():
-    if 'video' not in request.files:
-        return jsonify({'error': 'Thiếu file video'}), 400
-    
-    video_file = request.files['video']
-    
-    if video_file.filename == '':
-        return jsonify({'error': 'Không có file được chọn'}), 400
-    
-    if not allowed_video(video_file.filename):
-        return jsonify({'error': 'Định dạng video không được hỗ trợ'}), 400
-    
+    # Accept either an uploaded file ('video') or a server-side video filename ('video_path')
+    video_file = request.files.get('video')
+    video_path_from_server = request.form.get('video_path')
+
+    if video_file is None and not video_path_from_server:
+        return jsonify({'error': 'Thiếu file video hoặc video_path'}), 400
+
     session_id = str(uuid.uuid4())
 
     # Bắt đầu đo thời gian tổng
     total_start_time = time.time()
     
     try:
-        # Đo thời gian upload
+        # Đo thời gian upload (or use existing server-side file)
         upload_start = time.time()
-        video_path = os.path.join(app.config['UPLOAD_FOLDER'], f'{session_id}_input.mp4')
-        video_file.save(video_path)
+        if video_file is not None:
+            video_path = os.path.join(app.config['UPLOAD_FOLDER'], f'{session_id}_input.mp4')
+            video_file.save(video_path)
+        else:
+            # video_path_from_server expected to be a filename like '<id>_compare1.mp4'
+            filename = secure_filename(os.path.basename(video_path_from_server))
+            video_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            if not os.path.exists(video_path):
+                return jsonify({'error': 'Video server-side không tồn tại'}), 400
         upload_time = time.time() - upload_start
         
         num_interpolations = int(request.form.get('interpolations', 2))
@@ -1057,6 +1047,227 @@ def gallery_add():
     
     except Exception as e:
         print(f"Lỗi thêm vào trưng bày: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/temporal_profile', methods=['POST'])
+def temporal_profile():
+    """Tạo temporal profile từ video - hiển thị sự thay đổi theo thời gian"""
+    if 'video' not in request.files:
+        return jsonify({'error': 'Thiếu file video'}), 400
+    
+    video_file = request.files['video']
+    
+    if video_file.filename == '':
+        return jsonify({'error': 'Không có file được chọn'}), 400
+    
+    if not allowed_video(video_file.filename):
+        return jsonify({'error': 'Định dạng video không được hỗ trợ'}), 400
+    
+    session_id = str(uuid.uuid4())
+    
+    try:
+        # Lưu video
+        video_path = os.path.join(app.config['UPLOAD_FOLDER'], f'{session_id}_temporal.mp4')
+        video_file.save(video_path)
+        
+        # Lấy tham số
+        line_position = float(request.form.get('line_position', 0.5))  # 0-1, vị trí đường cắt
+        orientation = request.form.get('orientation', 'vertical')  # vertical hoặc horizontal
+        
+        # Đọc video
+        cap = cv2.VideoCapture(video_path)
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        
+        if total_frames == 0:
+            cap.release()
+            return jsonify({'error': 'Video không có frames'}), 400
+        
+        # Thu thập các slice theo thời gian
+        slices = []
+        frame_indices = []
+        
+        frame_idx = 0
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            
+            if orientation == 'vertical':
+                # Lấy một cột dọc tại vị trí line_position
+                x_pos = int(width * line_position)
+                x_pos = max(0, min(x_pos, width - 1))
+                slice_data = frame[:, x_pos, :]  # Shape: (height, 3)
+            else:
+                # Lấy một hàng ngang tại vị trí line_position
+                y_pos = int(height * line_position)
+                y_pos = max(0, min(y_pos, height - 1))
+                slice_data = frame[y_pos, :, :]  # Shape: (width, 3)
+            
+            slices.append(slice_data)
+            frame_indices.append(frame_idx)
+            frame_idx += 1
+        
+        cap.release()
+        
+        if len(slices) == 0:
+            return jsonify({'error': 'Không thể đọc frames từ video'}), 400
+        
+        # Tạo temporal profile image
+        # Mỗi slice là một cột/hàng, ghép lại theo thời gian
+        slices_array = np.array(slices)  # Shape: (num_frames, slice_length, 3)
+        
+        if orientation == 'vertical':
+            # Transpose để frames là trục X, height là trục Y
+            temporal_image = slices_array.transpose(1, 0, 2)  # Shape: (height, num_frames, 3)
+        else:
+            # Transpose để frames là trục Y, width là trục X  
+            temporal_image = slices_array  # Shape: (num_frames, width, 3)
+        
+        # Resize để hiển thị tốt hơn nếu cần
+        display_width = min(temporal_image.shape[1], 1920)
+        display_height = min(temporal_image.shape[0], 1080)
+        
+        if temporal_image.shape[1] > display_width or temporal_image.shape[0] > display_height:
+            temporal_image = cv2.resize(temporal_image, (display_width, display_height), 
+                                       interpolation=cv2.INTER_LINEAR)
+        
+        # Lưu temporal profile image
+        profile_path = os.path.join(app.config['RESULT_FOLDER'], f'{session_id}_temporal_profile.png')
+        cv2.imwrite(profile_path, temporal_image)
+        
+        # Tạo ảnh minh họa vị trí đường cắt trên frame đầu tiên
+        cap = cv2.VideoCapture(video_path)
+        ret, first_frame = cap.read()
+        cap.release()
+        
+        if ret:
+            # Vẽ đường cắt lên frame
+            overlay_frame = first_frame.copy()
+            if orientation == 'vertical':
+                x_pos = int(width * line_position)
+                cv2.line(overlay_frame, (x_pos, 0), (x_pos, height), (0, 255, 0), 2)
+            else:
+                y_pos = int(height * line_position)
+                cv2.line(overlay_frame, (0, y_pos), (width, y_pos), (0, 255, 0), 2)
+            
+            overlay_path = os.path.join(app.config['RESULT_FOLDER'], f'{session_id}_temporal_overlay.png')
+            cv2.imwrite(overlay_path, overlay_frame)
+        else:
+            overlay_path = None
+        
+        # Tính một số thống kê
+        duration = total_frames / fps if fps > 0 else 0
+        
+        return jsonify({
+            'success': True,
+            'temporal_profile': os.path.join('static', 'results', f'{session_id}_temporal_profile.png'),
+            'overlay_image': os.path.join('static', 'results', f'{session_id}_temporal_overlay.png') if overlay_path else None,
+            'stats': {
+                'total_frames': total_frames,
+                'fps': round(fps, 2),
+                'duration': round(duration, 2),
+                'resolution': f'{width}x{height}',
+                'profile_size': f'{temporal_image.shape[1]}x{temporal_image.shape[0]}',
+                'orientation': orientation,
+                'line_position': f'{int(line_position * 100)}%'
+            }
+        })
+    
+    except Exception as e:
+        print(f"Lỗi tạo temporal profile: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/temporal_profile_from_result', methods=['POST'])
+def temporal_profile_from_result():
+    """Tạo temporal profile từ video kết quả đã có trên server"""
+    try:
+        data = request.get_json()
+        video_url = data.get('video_url', '')
+        line_position = float(data.get('line_position', 0.5))
+        orientation = data.get('orientation', 'vertical')
+        
+        # Trích xuất session_id từ URL (ví dụ: /video/abc123.mp4 -> abc123)
+        # URL có dạng /video/{session_id}.mp4 hoặc /video/{session_id}_output.mp4
+        import re
+        match = re.search(r'/video/([^/]+)\.mp4', video_url)
+        if not match:
+            return jsonify({'error': 'Không thể xác định video'}), 400
+        
+        video_filename = match.group(1) + '.mp4'
+        video_path = os.path.join(app.config['RESULT_FOLDER'], video_filename)
+        
+        if not os.path.exists(video_path):
+            return jsonify({'error': f'Video không tồn tại: {video_filename}'}), 400
+        
+        session_id = str(uuid.uuid4())
+        
+        # Đọc video
+        cap = cv2.VideoCapture(video_path)
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        
+        if total_frames == 0:
+            cap.release()
+            return jsonify({'error': 'Video không có frames'}), 400
+        
+        # Thu thập các slice theo thời gian
+        slices = []
+        
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            
+            if orientation == 'vertical':
+                x_pos = int(width * line_position)
+                x_pos = max(0, min(x_pos, width - 1))
+                slice_data = frame[:, x_pos, :]
+            else:
+                y_pos = int(height * line_position)
+                y_pos = max(0, min(y_pos, height - 1))
+                slice_data = frame[y_pos, :, :]
+            
+            slices.append(slice_data)
+        
+        cap.release()
+        
+        if len(slices) == 0:
+            return jsonify({'error': 'Không thể đọc frames từ video'}), 400
+        
+        # Tạo temporal profile image
+        slices_array = np.array(slices)
+        
+        if orientation == 'vertical':
+            temporal_image = slices_array.transpose(1, 0, 2)
+        else:
+            temporal_image = slices_array
+        
+        # Lưu temporal profile image
+        profile_path = os.path.join(app.config['RESULT_FOLDER'], f'{session_id}_temporal_profile.png')
+        cv2.imwrite(profile_path, temporal_image)
+        
+        return jsonify({
+            'success': True,
+            'temporal_profile': os.path.join('static', 'results', f'{session_id}_temporal_profile.png'),
+            'stats': {
+                'total_frames': total_frames,
+                'fps': round(fps, 2),
+                'resolution': f'{width}x{height}',
+                'orientation': orientation
+            }
+        })
+    
+    except Exception as e:
+        print(f"Lỗi tạo temporal profile: {str(e)}")
         import traceback
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500

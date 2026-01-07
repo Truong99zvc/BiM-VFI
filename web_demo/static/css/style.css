@@ -168,3 +168,33 @@ footer a:hover {
         margin-bottom: 20px;
     }
 }
+
+/* Comparison interpolation controls */
+.interp-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.interp-controls label { margin-bottom: 0; font-size: 0.9rem; }
+.interp-count, .interp-fps, .interp-model { height: 34px; }
+.interp-btn { white-space: nowrap; }
+.interp-result { margin-top: 8px; }
+
+/* Small inline spinner placed beside buttons */
+.btn-spinner { vertical-align: middle; margin-left: 8px; }
+
+/* Make the result card look neat */
+.interp-result .ratio { margin-bottom: 8px; }
+
+/* Comparison stats two-column layout */
+.comparison-stats-grid { margin-top: 12px; }
+.comparison-stat-column .stat-item { margin-bottom: 10px; }
+.comparison-stat-column .stat-item .stat-value { font-size: 22px; }
+.comparison-stat-column .stat-item .stat-label { font-size: 12px; color: #6c757d; }
+
+/* Per-video stats container styling */
+.comp-stats { display: flex; flex-direction: column; gap: 10px; }
+.comp-stats .stat-item { background:#f1f3f5; padding:10px; border-radius:8px; }
+.comp-stats .stat-value { font-size:20px; font-weight:700; color:#2c3e50; }
+.comp-stats .stat-label { font-size:12px; color:#6c757d; }

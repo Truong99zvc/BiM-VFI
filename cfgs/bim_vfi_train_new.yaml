@@ -10,21 +10,21 @@ model:
 train_dataset:
   name: vimeo
   args:
-    root_path: ../data/vimeo_triplet
+    root_path: ./data/vimeo_triplet
     split: train
-    patch_size: 128        # ↓ nhỏ hơn 256 để giảm VRAM
+    patch_size: 128        
   loader:
-    batch_size: 32          # ↓ 4 ảnh/iter cho GPU 4 GB
-    num_workers: 8         # ↓ để tránh quá tải CPU
+    batch_size: 4          
+    num_workers: 2         
 
 test_dataset:
   name: vimeo
   args:
-    root_path: ../data/vimeo_triplet
+    root_path: ./data/vimeo_triplet
     split: val
   loader:
-    batch_size: 32
-    num_workers: 8
+    batch_size: 4
+    num_workers: 2
   save_imgs: False
 
 optimizer:

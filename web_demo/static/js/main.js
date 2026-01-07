@@ -97,6 +97,34 @@ $(document).ready(function() {
     
     // Biến lưu trạng thái cho form nội suy ảnh
     let pendingInterpolation = null;
+
+    // Temporal profile UI init: hide areas by default
+    try {
+        $('#image-temporal-area').hide();
+        $('#sequence-temporal-area').hide();
+    } catch(e) { /* element may not exist yet */ }
+
+    // Toggle temporal areas when checkboxes change
+    $(document).on('change', '#image-temporal-checkbox', function() {
+        const checked = $(this).is(':checked');
+        $('#image-temporal-area').toggle(checked);
+    });
+
+    $(document).on('change', '#sequence-temporal-checkbox', function() {
+        const checked = $(this).is(':checked');
+        $('#sequence-temporal-area').toggle(checked);
+    });
+
+    // Generate buttons (placeholders) for temporal profiles
+    $(document).on('click', '#generate-image-temporal', function(e) {
+        e.preventDefault();
+        $('#image-temporal-placeholder').html('<div class="placeholder-text"><p class="mb-0">(Temporal profile preview - not implemented)</p></div>');
+    });
+
+    $(document).on('click', '#generate-sequence-temporal', function(e) {
+        e.preventDefault();
+        $('#sequence-temporal-placeholder').html('<div class="placeholder-text"><p class="mb-0">(Temporal profile preview - not implemented)</p></div>');
+    });
     
     // Xử lý form submit cho ảnh - thêm logic SSIM
     $('#upload-form').submit(function(e) {
@@ -170,6 +198,42 @@ $(document).ready(function() {
                     } else {
                         $('#timing-info-container').hide();
                     }
+
+                    // Populate image stats (inference time, resolution, estimated FPS)
+                    try {
+                        const statsContainer = $('#image-stats');
+                        statsContainer.empty();
+                        const statItems = [];
+                        if (response.timing && response.timing.inference_time !== undefined) {
+                            statItems.push({ label: 'Inference Time (s)', value: response.timing.inference_time });
+                        }
+                        if (response.final_size) {
+                            statItems.push({ label: 'Final Size', value: response.final_size });
+                        }
+                        if (response.stats && response.stats.fps) {
+                            statItems.push({ label: 'Estimated FPS', value: response.stats.fps });
+                        }
+                        if (statItems.length > 0) {
+                            statItems.forEach(item => {
+                                const statDiv = $('<div class="stat-item">');
+                                statDiv.append($('<div class="stat-value">').text(item.value));
+                                statDiv.append($('<div class="stat-label">').text(item.label));
+                                statsContainer.append(statDiv);
+                            });
+                            statsContainer.show();
+                        } else {
+                            statsContainer.hide();
+                        }
+                    } catch (e) { console.warn('Failed to populate image stats', e); }
+
+                    // Show temporal area if user requested it
+                    try {
+                        if ($('#image-temporal-checkbox').is(':checked')) {
+                            $('#image-temporal-area').show();
+                        } else {
+                            $('#image-temporal-area').hide();
+                        }
+                    } catch(e){}
                     
                     // Hiển thị thông tin SSIM và resize nếu có
                     if (response.similarity !== undefined) {
@@ -228,21 +292,93 @@ $(document).ready(function() {
             contentType: false,
             success: function(response) {
                 $('#video-loading-indicator').hide();
-                $('#video-result-container').show();
-                
-                $('#video-result-video').attr('src', response.video);
-                $('#download-result-video').attr('href', response.download_video);
-                
-                displayVideoStats(response.stats);
-                displaySamples(response.samples);
-                
-                // Hiển thị thông tin timing
-                if (response.timing) {
-                    $('#video-timing-info-container').html(formatTiming(response.timing)).show();
+                const sideBySide = $('#video-side-by-side').is(':checked');
+
+                // Revoke any previously created object URL for original video
+                try {
+                    const prevUrl = $('#video-result-container').data('orig-url');
+                    if (prevUrl) {
+                        URL.revokeObjectURL(prevUrl);
+                        $('#video-result-container').removeData('orig-url');
+                    }
+                } catch (e) { console.warn('Failed to revoke previous object URL', e); }
+
+                if (sideBySide) {
+                    // Show two synced players: original (local) and interpolated (server)
+                    const originalURL = URL.createObjectURL($('#input-video')[0].files[0]);
+                    const interpURL = response.video;
+
+                    const html = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-center">Original</h6>
+                                <div class="ratio ratio-16x9 mb-2">
+                                    <video id="side-original" controls preload="metadata">
+                                        <source src="${originalURL}" type="video/mp4">
+                                    </video>
+                                </div>
+                                <div class="comp-stats" id="side-original-stats"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-center">Interpolated</h6>
+                                <div class="ratio ratio-16x9 mb-2">
+                                    <video id="side-interp" controls preload="metadata">
+                                        <source src="${interpURL}" type="video/mp4">
+                                    </video>
+                                </div>
+                                <a class="btn btn-success w-100 mb-2" href="${response.download_video}" download>Tải xuống Interpolated</a>
+                                <div class="comp-stats" id="side-interp-stats"></div>
+                            </div>
+                        </div>
+                    `;
+
+                    $('#video-result-container').html(html).show();
+
+                    // store object URL so we can revoke it later
+                    try { $('#video-result-container').data('orig-url', originalURL); } catch(e){/*ignore*/}
+
+                    // populate simple stats for both sides
+                    try {
+                        const stats = response.stats || {};
+                        const leftHtml = `
+                            <div class="stat-item"><div class="stat-value">${stats.fps || ''}</div><div class="stat-label">FPS</div></div>
+                            <div class="stat-item"><div class="stat-value">${stats.original_frames || ''}</div><div class="stat-label">Frames (original)</div></div>
+                        `;
+                        const rightHtml = `
+                            <div class="stat-item"><div class="stat-value">${stats.fps || ''}</div><div class="stat-label">Estimated FPS</div></div>
+                            <div class="stat-item"><div class="stat-value">${stats.final_frames || ''}</div><div class="stat-label">Frames (after)</div></div>
+                        `;
+                        $('#side-original-stats').html(leftHtml);
+                        $('#side-interp-stats').html(rightHtml);
+                    } catch (e) {
+                        console.warn('Failed to populate side-by-side stats', e);
+                    }
+
+                    // Setup sync
+                    setupTwoVideoSync('#side-original', '#side-interp');
                 } else {
-                    $('#video-timing-info-container').hide();
+                    // Replace container with single-player layout (keep stats area)
+                    $('#video-result-container').html(`
+                        <div class="ratio ratio-16x9 mb-3">
+                            <video id="video-result-video" controls autoplay loop>
+                                <source src="${response.video}" type="video/mp4">
+                            </video>
+                        </div>
+                        <a id="download-result-video" class="btn btn-success w-100 mb-3" href="${response.download_video}" download>Tải xuống video</a>
+                        <div id="video-stats" class="stats-grid"></div>
+                    `).show();
+
+                    displayVideoStats(response.stats);
+                    displaySamples(response.samples);
+
+                    // Hiển thị thông tin timing
+                    if (response.timing) {
+                        $('#video-timing-info-container').html(formatTiming(response.timing)).show();
+                    } else {
+                        $('#video-timing-info-container').hide();
+                    }
                 }
-                
+
                 $('#upload-video-form button[type="submit"]').prop('disabled', false);
             },
             error: function(xhr) {
@@ -378,24 +514,42 @@ $(document).ready(function() {
     
     // Hiển thị thống kê so sánh video
     function displayComparisonStats(stats) {
-        const container = $('#comparison-stats');
-        container.empty();
-        
-        const statItems = [
-            { label: 'Video 1 - FPS', value: stats.video1.fps },
-            { label: 'Video 1 - Frames', value: stats.video1.frames },
-            { label: 'Video 1 - Độ phân giải', value: stats.video1.resolution },
-            { label: 'Video 2 - FPS', value: stats.video2.fps },
-            { label: 'Video 2 - Frames', value: stats.video2.frames },
-            { label: 'Video 2 - Độ phân giải', value: stats.video2.resolution }
-        ];
-        
-        statItems.forEach(item => {
-            const statDiv = $('<div class="stat-item">');
-            statDiv.append($('<div class="stat-value">').text(item.value));
-            statDiv.append($('<div class="stat-label">').text(item.label));
-            container.append(statDiv);
-        });
+        // Populate per-video stats containers placed inside each video block
+        try {
+            const leftEl = $('#comparison-video1-stats');
+            const rightEl = $('#comparison-video2-stats');
+
+            // Fallback if those IDs are not present (older layout)
+            const leftContainer = leftEl.length ? leftEl : $('#comp-stats-1');
+            const rightContainer = rightEl.length ? rightEl : $('#comp-stats-2');
+
+            leftContainer.empty();
+            rightContainer.empty();
+
+            const leftStats = [
+                { label: 'FPS', value: stats.video1.fps },
+                { label: 'Frames', value: stats.video1.frames },
+                { label: 'Độ phân giải', value: stats.video1.resolution }
+            ];
+
+            const rightStats = [
+                { label: 'FPS', value: stats.video2.fps },
+                { label: 'Frames', value: stats.video2.frames },
+                { label: 'Độ phân giải', value: stats.video2.resolution }
+            ];
+
+            leftStats.forEach(item => {
+                const statDiv = $(`<div class="stat-item"><div class="stat-value">${item.value}</div><div class="stat-label">${item.label}</div></div>`);
+                leftContainer.append(statDiv);
+            });
+
+            rightStats.forEach(item => {
+                const statDiv = $(`<div class="stat-item"><div class="stat-value">${item.value}</div><div class="stat-label">${item.label}</div></div>`);
+                rightContainer.append(statDiv);
+            });
+        } catch (e) {
+            console.warn('Could not render comparison stats', e);
+        }
     }
     
     // Hiển thị hai video so sánh
@@ -403,42 +557,53 @@ $(document).ready(function() {
         const wrapper = $('#comparison-videos-wrapper');
         wrapper.empty();
         
+        // Build video blocks with per-video interpolation controls
+        function videoBlock(title, src, id) {
+            return `
+                <div class="mb-3">
+                    <h6 class="text-center mb-2">${title}</h6>
+                    <div class="ratio ratio-16x9 mb-2">
+                        <video id="${id}" controls loop preload="metadata">
+                            <source src="${src}" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="interp-controls mb-2">
+                        <div class="d-flex gap-2 align-items-center">
+                            <div>
+                                <div class="form-text">Nội suy</div>
+                                <input type="number" class="form-control form-control-sm interp-count" value="2" min="1" style="width:80px">
+                            </div>
+                            <div>
+                                <div class="form-text">FPS</div>
+                                <input type="number" class="form-control form-control-sm interp-fps" value="30" min="1" style="width:90px">
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center mt-2">
+                            <select class="form-select form-select-sm interp-model" style="width:170px">
+                                <option value="pretrained" selected>pretrained</option>
+                                <option value="trained_330">trained_330</option>
+                            </select>
+                            <button class="btn btn-sm btn-primary interp-btn" data-src="${src}">Nội suy</button>
+                        </div>
+                    </div>
+                    <div class="interp-result" id="${id}-result" style="display:none;margin-top:8px"></div>
+                    <div class="comp-stats mt-3" id="${id}-stats"></div>
+                </div>
+            `;
+        }
+
         if (layout === 'side-by-side') {
             wrapper.html(`
                 <div class="row">
-                    <div class="col-md-6">
-                        <h6 class="text-center mb-2">Video 1 (Gốc)</h6>
-                        <div class="ratio ratio-16x9">
-                            <video id="comparison-video1" controls loop preload="metadata">
-                                <source src="${video1Src}" type="video/mp4">
-                            </video>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <h6 class="text-center mb-2">Video 2 (Đã xử lý)</h6>
-                        <div class="ratio ratio-16x9">
-                            <video id="comparison-video2" controls loop preload="metadata">
-                                <source src="${video2Src}" type="video/mp4">
-                            </video>
-                        </div>
-                    </div>
+                    <div class="col-md-6">${videoBlock('Video 1 ', video1Src, 'comparison-video1')}</div>
+                    <div class="col-md-6">${videoBlock('Video 2 ', video2Src, 'comparison-video2')}</div>
                 </div>
             `);
         } else {
             wrapper.html(`
                 <div>
-                    <h6 class="text-center mb-2">Video 1 (Gốc)</h6>
-                    <div class="ratio ratio-16x9 mb-3">
-                        <video id="comparison-video1" controls loop preload="metadata">
-                            <source src="${video1Src}" type="video/mp4">
-                        </video>
-                    </div>
-                    <h6 class="text-center mb-2">Video 2 (Đã xử lý)</h6>
-                    <div class="ratio ratio-16x9">
-                        <video id="comparison-video2" controls loop preload="metadata">
-                            <source src="${video2Src}" type="video/mp4">
-                        </video>
-                    </div>
+                    ${videoBlock('Video 1 ', video1Src, 'comparison-video1')}
+                    ${videoBlock('Video 2 ', video2Src, 'comparison-video2')}
                 </div>
             `);
         }
@@ -464,6 +629,67 @@ $(document).ready(function() {
         video2.addEventListener('loadedmetadata', function() {
             video2Ready = true;
             checkBothReady();
+        });
+
+        // Attach per-video interpolation handlers (inline spinner, cleaner result placement)
+        $('.interp-btn').off('click').on('click', function() {
+            const btn = $(this);
+            const src = btn.data('src');
+            const container = btn.closest('.mb-3');
+            const interpCount = container.find('.interp-count').val();
+            const interpFps = container.find('.interp-fps').val();
+            const interpModel = container.find('.interp-model').val();
+
+            // Show small inline spinner and disable button
+            btn.prop('disabled', true);
+            const spinnerHtml = '<span class="btn-spinner spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+            btn.after(spinnerHtml);
+
+            const resultDiv = container.find('.interp-result');
+            resultDiv.hide().empty();
+
+            // Extract filename from comparison_video URL: '/comparison_video/<filename>'
+            const parts = src.split('/');
+            const filename = parts[parts.length - 1];
+
+            const formData = new FormData();
+            formData.append('video_path', filename);
+            formData.append('interpolations', interpCount);
+            formData.append('fps', interpFps);
+            formData.append('model', interpModel);
+
+            $.ajax({
+                url: '/interpolate_video',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    btn.prop('disabled', false);
+                    btn.siblings('.btn-spinner').remove();
+                    if (response && response.video) {
+                        // Show resulting video
+                        const videoUrl = response.video;
+                        const html = `
+                            <div class="ratio ratio-16x9 mb-2">
+                                <video controls loop preload="metadata">
+                                    <source src="${videoUrl}" type="video/mp4">
+                                </video>
+                            </div>
+                            <a class="btn btn-sm btn-success" href="${response.download_video}" download>Tải xuống video</a>
+                        `;
+                        resultDiv.html(html).show();
+                    } else {
+                        resultDiv.html('<div class="alert alert-warning">Không có video trả về</div>').show();
+                    }
+                },
+                error: function(xhr) {
+                    btn.prop('disabled', false);
+                    btn.siblings('.btn-spinner').remove();
+                    const response = xhr.responseJSON || {};
+                    resultDiv.html(`<div class="alert alert-danger">${response.error || 'Lỗi khi nội suy video'}</div>`).show();
+                }
+            });
         });
     }
     
@@ -574,6 +800,53 @@ $(document).ready(function() {
         video1.addEventListener('pause', stopContinuousSync);
         video1.addEventListener('ended', stopContinuousSync);
     }
+
+    // Sync two arbitrary videos given selectors
+    function setupTwoVideoSync(selA, selB) {
+        const videoA = document.querySelector(selA);
+        const videoB = document.querySelector(selB);
+        if (!videoA || !videoB) return;
+
+        let isSyncing = false;
+
+        function playHandler(src, target) {
+            if (!isSyncing) {
+                isSyncing = true;
+                target.currentTime = src.currentTime;
+                target.play().catch(e => console.log('Play error:', e));
+                setTimeout(() => isSyncing = false, 100);
+            }
+        }
+
+        videoA.addEventListener('play', () => playHandler(videoA, videoB));
+        videoB.addEventListener('play', () => playHandler(videoB, videoA));
+
+        videoA.addEventListener('pause', () => { if (!isSyncing) { isSyncing = true; videoB.pause(); setTimeout(()=> isSyncing=false,100); }});
+        videoB.addEventListener('pause', () => { if (!isSyncing) { isSyncing = true; videoA.pause(); setTimeout(()=> isSyncing=false,100); }});
+
+        videoA.addEventListener('seeking', () => { if (!isSyncing) { isSyncing = true; videoB.currentTime = videoA.currentTime; setTimeout(()=> isSyncing=false,100); }});
+        videoB.addEventListener('seeking', () => { if (!isSyncing) { isSyncing = true; videoA.currentTime = videoB.currentTime; setTimeout(()=> isSyncing=false,100); }});
+
+        videoA.addEventListener('ratechange', () => { if (!isSyncing) { isSyncing = true; videoB.playbackRate = videoA.playbackRate; setTimeout(()=> isSyncing=false,100); }});
+        videoB.addEventListener('ratechange', () => { if (!isSyncing) { isSyncing = true; videoA.playbackRate = videoB.playbackRate; setTimeout(()=> isSyncing=false,100); }});
+
+        // continuous sync
+        let syncInterval = null;
+        function startContinuousSync() {
+            if (syncInterval) clearInterval(syncInterval);
+            syncInterval = setInterval(function() {
+                if (!videoA.paused && !videoB.paused) {
+                    const diff = Math.abs(videoA.currentTime - videoB.currentTime);
+                    if (diff > 0.1) videoB.currentTime = videoA.currentTime;
+                }
+            }, 100);
+        }
+        function stopContinuousSync() { if (syncInterval) { clearInterval(syncInterval); syncInterval = null; }}
+
+        videoA.addEventListener('play', startContinuousSync);
+        videoA.addEventListener('pause', stopContinuousSync);
+        videoA.addEventListener('ended', stopContinuousSync);
+    }
     
     // Load gallery items từ localStorage khi trang được load
     loadGalleryFromStorage();
@@ -667,7 +940,7 @@ $(document).ready(function() {
         if (hasOther) {
             videosHtml += `
                 <div class="gallery-video-wrapper">
-                    <div class="gallery-video-label">BiM-VFI reproduce</div>
+                    <div class="gallery-video-label">Model khác</div>
                     <div class="ratio ratio-16x9">
                         <video class="gallery-video" data-group="${data.id}" data-index="2" controls loop preload="metadata">
                             <source src="${data.videos.other}" type="video/mp4">
@@ -938,6 +1211,15 @@ $(document).ready(function() {
                     
                     $('#sequence-samples-card').show();
                 }
+
+                // Show/hide temporal profile area based on checkbox
+                try {
+                    if ($('#sequence-temporal-checkbox').is(':checked')) {
+                        $('#sequence-temporal-area').show();
+                    } else {
+                        $('#sequence-temporal-area').hide();
+                    }
+                } catch(e) {}
                 
                 $('#sequence-interpolate-form button').prop('disabled', false);
             },
