@@ -292,10 +292,11 @@ Mã nguồn được tham khảo, tinh chỉnh và phát triển nhằm mục đ
 Nếu sử dụng mã nguồn này cho nghiên cứu, vui lòng trích dẫn bài báo gốc:
 
 ```bibtex
-@inproceedings{seo2025bimvfi,
-  title={BiM-VFI: Bilateral Motion Field-Guided Video Frame Interpolation for Non-Uniform Motions},
+@inproceedings{Seo_2025_CVPR,
+  title={BiM-VFI: Bidirectional Motion Field-Guided Frame Interpolation for Video with Non-uniform Motions},
   author={Seo, Wonyong and Oh, Jihyong and Kim, Munchurl},
-  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  booktitle={Proceedings of the Computer Vision and Pattern Recognition Conference},
+  pages={7244--7253},
   year={2025}
 }
 
