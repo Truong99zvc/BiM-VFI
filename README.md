@@ -7,6 +7,12 @@
 <!-- Title -->
 <h1 align="center"><b>CS420.Q12 - CÁC VẤN ĐỀ CHỌN LỌC TRONG THỊ GIÁC MÁY TÍNH</b></h1>
 
+<p align="center">
+    <a href="https://pytorch.org/"><img src="https://img.shields.io/badge/PyTorch-2.x-EE4C2C.svg?style=flat-square" alt="PyTorch"></a>
+    <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.11-3776AB.svg?style=flat-square" alt="Python"></a>
+    <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License"></a>
+</p>
+
 ## MỤC LỤC
 * [Giới thiệu môn học](#gioi-thieu-mon-hoc)
 * [Giảng viên hướng dẫn](#giang-vien-huong-dan)
