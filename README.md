@@ -246,11 +246,11 @@ Web demo cung cấp các tính năng sau:
 ## KAGGLE NOTEBOOK
 <a name="kaggle-notebook"></a>
 
-Đối với người dùng **không có GPU** hoặc những người muốn huấn luyện/đánh giá model trên tài nguyên đám mây, chúng tôi cung cấp một Kaggle notebook:
+Đối với người dùng **có GPU không tương thích, không có GPU**, gặp các lỗi về phần cứng, thiết lập, cài đặt hoặc những người muốn huấn luyện/đánh giá model trên tài nguyên đám mây, chúng tôi cung cấp một Kaggle notebook (đã chạy sẵn ra log và model):
 
 > 🔗 **Kaggle Notebook**: [https://www.kaggle.com/code/truong9/bim-vfi?scriptVersionId=289083440](https://www.kaggle.com/code/truong9/bim-vfi?scriptVersionId=289083440)
 
-**Lưu ý**: Khi sử dụng Kaggle notebook, bạn cũng sẽ cần điều chỉnh một số cấu hình trong các tệp YAML để khớp với đường dẫn môi trường Kaggle (ví dụ: `/kaggle/input/` cho dataset).
+**Lưu ý**: Khi sử dụng Kaggle notebook, bạn cũng sẽ cần điều chỉnh một số cấu hình trong các tệp YAML để khớp với đường dẫn môi trường Kaggle (ví dụ: `/kaggle/input/` cho dataset). Cần chọn đúng dataset Vimeo 90K-Triplet (đã có sẵn trên kaggle) và GPU phù hợp (P100 hoặc T4x2 free từ kaggle).
 
 ## THAM KHẢO
 <a name="tham-khao"></a>
