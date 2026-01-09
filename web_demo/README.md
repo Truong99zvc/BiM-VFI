@@ -1,99 +1,71 @@
-# BiM-VFI Web Demo
+# BiM-VFI Web Demo Interface
 
-Web demo cho thuật toán nội suy khung hình BiM-VFI (Bilateral Motion-based Video Frame Interpolation).
+Đây là module giao diện web tương tác cho dự án [BiM-VFI](../README.md). Module này cho phép người dùng trải nghiệm mô hình nội suy khung hình thông qua trình duyệt một cách trực quan.
+
+[Quay lại Project Chính](../README.md)
 
 ## Tính năng
-
-- **Nội suy khung hình**: Tạo các khung hình trung gian mượt mà giữa hai ảnh
-- **Lựa chọn model**: Chọn giữa pretrained model hoặc custom trained models
-- **Xuất video**: Tự động tạo video từ các khung hình đã nội suy
-- **Giao diện thân thiện**: Giao diện web đơn giản, dễ sử dụng
+- **Giao diện trực quan**: Upload và xử lý ảnh/video ngay trên trình duyệt.
+- **Hỗ trợ đa dạng**: Nội suy cặp ảnh, video ngắn, hoặc chuỗi khung hình.
+- **Tùy chỉnh**: Lựa chọn model (Pretrained/Reproduced), số lượng khung hình trung gian (2x, 4x, 8x...).
+- **Export**: Tải xuống kết quả dưới dạng Video.
 
 ## Cài đặt
 
-### Yêu cầu
+### 1. Chuẩn bị môi trường gốc
+Trước tiên, hãy đảm bảo bạn đã cài đặt môi trường `bimvfi` và các thư viện cốt lõi (PyTorch, CUDA) theo hướng dẫn tại **[README chính của dự án](../README.md#cai-dat-moi-truong)**.
 
-- Python 3.8+
-- PyTorch
-- Flask
-- OpenCV
-- Các thư viện khác trong project BiM-VFI
-
-### Hướng dẫn cài đặt
-
-1. Đảm bảo bạn đã cài đặt tất cả dependencies cho BiM-VFI:
+### 2. Cài đặt thư viện Web
+Kích hoạt môi trường và cài thêm các gói cần thiết cho giao diện web:
 
 ```bash
-pip install torch torchvision
-pip install opencv-python
-pip install flask
-pip install numpy
+conda activate bimvfi
+pip install flask werkzeug pillow scikit-image
 ```
 
-2. Đảm bảo bạn có các model weights:
-   - `pretrained/bim_vfi.pth` - Pretrained model từ tác giả
-   - `save/bim_vfi_train_new__400_epochs_NEW/checkpoints/model_best.pth` - Custom trained model (400 epochs)
+## Hướng dẫn sử dụng
 
-## Sử dụng
+1. **Di chuyển vào thư mục demo**:
+   ```bash
+   cd web_demo
+   ```
 
-1. Chạy web server:
+2. **Khởi chạy Server**:
+   ```bash
+   python app.py
+   ```
+   *Lưu ý: Đảm bảo không có tiến trình nào khác đang chạy trên cổng 5000.*
 
-```bash
-cd web_demo
-python app.py
-```
-
-2. Mở trình duyệt và truy cập: `http://localhost:5000`
-
-3. Sử dụng web demo:
-   - Upload hai ảnh (ảnh bắt đầu và ảnh kết thúc)
-   - Chọn model muốn sử dụng
-   - Chọn số lượng khung hình trung gian (8, 16, hoặc 32)
-   - Nhấn "Tạo video"
-   - Xem kết quả và tải video xuống
+3. **Truy cập**:
+   Mở trình duyệt và vào địa chỉ: `http://localhost:5000`
 
 ## Cấu trúc thư mục
 
 ```
 web_demo/
-├── app.py                 # Flask application
-├── README.md             # File hướng dẫn này
-├── templates/
-│   └── index.html        # Giao diện web
-└── static/
-    ├── uploads/          # Ảnh upload
-    ├── results/          # Video và frames kết quả
-    └── images/           # Assets
+├── app.py                 # File khởi chạy Flask Server
+├── templates/             # Giao diện HTML
+│   └── index.html
+├── static/
+│   ├── uploads/           # Nơi lưu file người dùng upload (Tự động dọn dẹp)
+│   ├── results/           # Nơi lưu kết quả xử lý (Tự động dọn dẹp)
+│   ├── css/               # Stylesheet
+│   └── js/                # Script xử lý frontend
+└── README.md              # Tài liệu hướng dẫn này
 ```
 
-## Models
+## Khắc phục sự cố thường gặp
 
-### Pretrained (Original)
-Model gốc từ tác giả BiM-VFI, được train trên dataset chuẩn.
+*   **Lỗi "ModuleNotFoundError"**:
+    *   Đảm bảo bạn đã `conda activate bimvfi` trước khi chạy `python app.py`.
+    *   Đảm bảo đang đứng đúng thư mục `web_demo` (hoặc cấu hình đường dẫn import đúng trong code).
 
-### Custom Trained (400 epochs)
-Model được train lại với 400 epochs trên dataset tùy chỉnh.
+*   **Lỗi CUDA Out of Memory**:
+    *   Khi chạy trên GPU yếu (như GTX 1650 4GB), hãy hạn chế upload video độ phân giải quá cao (trên Full HD) hoặc giảm số lượng khung hình nội suy.
 
+*   **Lỗi không load được Model**:
+    *   Kiểm tra lại đường dẫn file `.pth` trong `README.md` chính xem đã cấu hình đường dẫn tuyệt đối chưa.
 
-## Lưu ý
-
-- Các file ảnh được hỗ trợ: `.jpg`, `.jpeg`, `.png`
-- Kích thước file tối đa: 16MB
-- Model sẽ tự động padding ảnh để đảm bảo kích thước chia hết cho 32
-- Kết quả sẽ được lưu trong thư mục `static/results/`
-
-## Khắc phục sự cố
-
-### Lỗi: "Không tìm thấy module 'modules'"
-Đảm bảo bạn đang chạy app.py từ thư mục "web demo" và project root đã được thêm vào sys.path.
-
-### Lỗi: "Không thể load model"
-Kiểm tra xem file model có tồn tại tại đường dẫn được chỉ định không.
-
-### Lỗi CUDA out of memory
-Giảm kích thước ảnh đầu vào hoặc số lượng khung hình trung gian.
-
-## Tham khảo
-
-- [BiM-VFI GitHub](https://github.com/KAIST-VICLab/BiM-VFI)
-- [BiM-VFI Paper](https://arxiv.org/abs/2306.15111)
+## Bản quyền
+Module này là một phần mở rộng được phát triển bởi nhóm sinh viên thực hiện đồ án, dựa trên mã nguồn cốt lõi của **KAIST-VICLab**.
+Vui lòng tham khảo [Giấy phép chung](../LICENSE) của dự án.
