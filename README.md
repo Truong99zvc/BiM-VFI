@@ -10,7 +10,8 @@
 <p align="center">
     <a href="https://pytorch.org/"><img src="https://img.shields.io/badge/PyTorch-2.x-EE4C2C.svg?style=flat-square" alt="PyTorch"></a>
     <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.11-3776AB.svg?style=flat-square" alt="Python"></a>
-    <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-green.svg?style=flat-square" alt="License"></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/badge/License-Research%20Only-blue.svg?style=flat-square" alt="License"></a>
+
 </p>
 
 ## MỤC LỤC
@@ -18,6 +19,7 @@
 * [Giảng viên hướng dẫn](#giang-vien-huong-dan)
 * [Sinh viên thực hiện](#sinh-vien-thuc-hien)
 * [Đồ án](#do-an)
+* [Yêu cầu hệ thống](#yeu-cau-he-thong)
 * [Cài đặt môi trường](#cai-dat-moi-truong)
 * [Lưu ý cấu hình quan trọng](#luu-y-cau-hinh-quan-trong)
 * [Dữ liệu](#du-lieu)
@@ -66,6 +68,18 @@ Mã nguồn cốt lõi (Core Model Architecture) thuộc về nhóm tác giả K
 
 Repository này chứa mã nguồn cài đặt của BiM-VFI, một phương pháp nội suy khung hình video được hướng dẫn bởi trường chuyển động hai chiều dành cho video có chuyển động không đồng nhất.  Dự án dựa trên bài báo CVPR 2025 của Wonyong Seo, Jihyong Oh và Munchurl Kim. Repository này sử dụng code gốc của nhóm tác giả đồng thời chỉnh sửa một số thiết lập về cấu hình, phiên bản,... để phù hợp tương thích đa số các thiết bị ở thời điểm hiện tại để thực hiện quá trình reproduce dễ dàng hơn và tránh lỗi, xung đột. Ngoài ra, nhóm cũng bổ sung thêm chức năng web demo để chạy thử mô hình như 1 ứng dụng.
 
+## YÊU CẦU HỆ THỐNG
+<a name="yeu-cau-he-thong"></a>
+Để chạy mã nguồn ổn định, hệ thống cần đáp ứng các yêu cầu tối thiểu sau:
+
+*   **Hệ điều hành**: Windows 10/11 (đã được nhóm test kỹ) hoặc Linux.
+*   **GPU (Quan trọng)**:
+    *   Bắt buộc **NVIDIA GPU** hỗ trợ CUDA.
+    *   **VRAM**: Tối thiểu **4GB** (Test trên GTX 1650 chạy ổn định với độ phân giải thấp/trung bình). Khuyến nghị **8GB+** để inference video HD/FullHD.
+    *   **Lưu ý**: Để huấn luyện (training), khuyến nghị sử dụng GPU server (như Kaggle T4x2/P100) vì 4GB VRAM không đủ để training batch size lớn.
+*   **CUDA Driver**: Cần cài đặt NVIDIA Driver phiên bản mới nhất tương thích với CUDA 11.8 trở lên.
+*   **RAM**: Tối thiểu 16GB (Quá trình xử lý video tốn nhiều RAM).
+
 ## CÀI ĐẶT MÔI TRƯỜNG
 <a name="cai-dat-moi-truong"></a>
 
@@ -81,7 +95,7 @@ Trước khi thiết lập môi trường, hãy đảm bảo đã cài đặt **
 ```bash
 conda create -n bimvfi python=3.11
 conda activate bimvfi
-pip install basicsr-fixed Ipython torchsummary moviepy pyyaml imageio packaging tqdm opencv-python tensorboardx ptflops pyiqa lpips stlpips_pytorch dists_pytorch torch torchvision --index-url https://download.pytorch.org/whl/cu130
+pip install basicsr-fixed ipython torchsummary moviepy pyyaml imageio packaging tqdm opencv-python tensorboardx ptflops pyiqa lpips stlpips_pytorch dists_pytorch torch torchvision --index-url https://download.pytorch.org/whl/cu130
 conda install cupy -c conda-forge
 ```
 
