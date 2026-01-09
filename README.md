@@ -87,7 +87,7 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 Biến môi trường này giải quyết lỗi "OMP: Error #15: Initializing libiomp5md.dll, but found libiomp5md.dll already initialized" có thể xảy ra khi nhiều bản sao của runtime OpenMP được liên kết vào chương trình. Đây là vấn đề phổ biến trên hệ thống Windows khi sử dụng các thư viện như NumPy, PyTorch và OpenCV cùng nhau.
 
 ### Cấu hình đường dẫn tuyệt đối (Rất quan trọng)
-**⚠️ Điều này rất quan trọng để chạy code thành công!**
+**Điều này rất quan trọng để chạy code thành công!**
 
 Sau khi clone repository, bạn **bắt buộc** phải sửa đổi đường dẫn dataset và model trong các file cấu hình nằm trong thư mục `cfgs/`. Các đường dẫn tương đối mặc định sẽ không hoạt động và cần được thay đổi thành **đường dẫn tuyệt đối** tương ứng với hệ thống cục bộ của bạn.
 
@@ -199,7 +199,7 @@ python main.py --cfg cfgs/bim_vfi_train_new.yaml
 
 ## DEMO
 <a name="demo"></a>
-### Demo Dòng Lệnh
+### Demo qua dòng lệnh
 <a name="demo-dong-lenh"></a>
 Các video tùy chỉnh ở định dạng nhiều ảnh hoặc video có thể được nội suy như sau.
 
@@ -219,7 +219,7 @@ python main.py --cfg cfgs/bim_vfi_demo.yaml
 
 ### Web Demo
 <a name="web-demo"></a>
-Dự án bao gồm một giao diện demo dựa trên web để dễ dàng nội suy khung hình video. Để chạy web demo:
+Dự án bao gồm một giao diện demo dựa trên web để dễ dàng nội suy khung hình video. Không như [Demo dòng lệnh](#demo-dong-lenh) ở trên vốn từ repository gốc, web demo này được nhóm xây dựng mới hoàn toàn với đa dạng chức năng và tiện dụng hơn. Để chạy web demo:
 
 1. **Điều hướng đến thư mục web_demo**:
    ```bash
@@ -238,7 +238,7 @@ Web demo cung cấp các tính năng sau:
 - **Nội suy cặp ảnh**: Tải lên hai ảnh và tạo khung hình nội suy giữa chúng
 - **Nội suy video**: Tải lên tệp video và nội suy khung hình giữa các khung hình liên tiếp
 - **Nội suy chuỗi khung hình**: Tải lên nhiều khung hình và nội suy giữa chúng
-- **Lựa chọn Model**: Chọn giữa các model được huấn luyện trước khác nhau (pretrained, trained_330)
+- **Lựa chọn Model**: Chọn giữa các model được huấn luyện trước khác nhau (pretrained, reproduce)
 - **Thông số tùy chỉnh**: Điều chỉnh số lượng khung hình nội suy và FPS đầu ra
 
 **Lưu ý**: Hãy chắc chắn rằng bạn đã cài đặt tất cả các thư viện cần thiết được đề cập trong phần [Cài đặt môi trường](#cai-dat-moi-truong), bao gồm các thư viện bổ sung cho web demo (Flask, werkzeug, Pillow, scikit-image).
@@ -255,5 +255,6 @@ Web demo cung cấp các tính năng sau:
 ## THAM KHẢO
 <a name="tham-khao"></a>
 Mã nguồn được tham khảo, tinh chỉnh và phát triển từ repository của nhóm tác giả gốc của BiM-VFI nhằm mục đích nghiên cứu và học tập, hoàn toàn không mang tính thương mại. Tham khảo tại:
+
 [https://github.com/KAIST-VICLab/BiM-VFI](https://github.com/KAIST-VICLab/BiM-VFI)
 
