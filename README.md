@@ -97,7 +97,7 @@ After cloning the repository, you **must** modify the dataset and model paths in
 Change the dataset path from relative to absolute:
 ```yaml
 # Before (will NOT work)
-root_path: ./data/vimeo_triplet
+root_path: ../data/vimeo_triplet
 
 # After (example - adjust to your actual path)
 root_path: C:/Users/YourUsername/BiM-VFI/data/vimeo_triplet
@@ -116,7 +116,7 @@ resume: C:/Users/YourUsername/BiM-VFI/save/train_new__400_epochs_NEW/checkpoints
 2. **Dataset path** - Change `root_path` to absolute path:
 ```yaml
 # Before
-root_path: ./data/vimeo_triplet
+root_path: ../data/vimeo_triplet
 
 # After (example)
 root_path: C:/Users/YourUsername/BiM-VFI/data/vimeo_triplet

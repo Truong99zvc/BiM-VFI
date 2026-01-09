@@ -10,7 +10,7 @@ model:
 train_dataset:
   name: vimeo
   args:
-    root_path: ./data/vimeo_triplet
+    root_path: ../data/vimeo_triplet
     split: train
     patch_size: 128        
   loader:
@@ -20,7 +20,7 @@ train_dataset:
 test_dataset:
   name: vimeo
   args:
-    root_path: ./data/vimeo_triplet
+    root_path: ../data/vimeo_triplet
     split: val
   loader:
     batch_size: 4
