@@ -46,6 +46,18 @@
 <a name="do-an"></a>
 **Tên đồ án**: BiM-VFI - NỘI SUY KHUNG HÌNH VIDEO DỰA TRÊN TRƯỜNG CHUYỂN ĐỘNG HAI CHIỀU
 
+**Dự án này là kết quả của quá trình tái lập (reproduce) và phát triển ứng dụng dựa trên nghiên cứu:**
+> **BiM-VFI: Bilateral Motion Field-Guided Video Frame Interpolation for Non-Uniform Motions (CVPR 2025)**
+> *Tác giả: Wonyong Seo, Jihyong Oh, Munchurl Kim*
+
+**Đóng góp của nhóm sinh viên:**
+1.  **Tái lập huấn luyện (Reproducibility):** Huấn luyện lại mô hình từ đầu trên GPU giới hạn (GTX 1650) để kiểm chứng kết quả trong bài báo.
+2.  **Khắc phục lỗi tương thích:** Chỉnh sửa mã nguồn để hoạt động ổn định trên các môi trường mới (Torch mới, CUDA mới) và sửa các lỗi đặc thù trên Windows (đường dẫn, thư viện OpenMP).
+3.  **Phát triển Ứng dụng:** Xây dựng thêm module **Web Demo** (Flask) cho phép người dùng tương tác trực quan với mô hình.
+4.  **Tài liệu hóa:** Việt hóa và chi tiết hóa tài liệu hướng dẫn sử dụng.
+
+Mã nguồn cốt lõi (Core Model Architecture) thuộc về nhóm tác giả KAIST-VICLab.
+
 Repository này chứa mã nguồn cài đặt của BiM-VFI, một phương pháp nội suy khung hình video được hướng dẫn bởi trường chuyển động hai chiều dành cho video có chuyển động không đồng nhất.  Dự án dựa trên bài báo CVPR 2025 của Wonyong Seo, Jihyong Oh và Munchurl Kim. Repository này sử dụng code gốc của nhóm tác giả đồng thời chỉnh sửa một số thiết lập về cấu hình, phiên bản,... để phù hợp tương thích đa số các thiết bị ở thời điểm hiện tại để thực hiện quá trình reproduce dễ dàng hơn và tránh lỗi, xung đột. Ngoài ra, nhóm cũng bổ sung thêm chức năng web demo để chạy thử mô hình như 1 ứng dụng.
 
 ## CÀI ĐẶT MÔI TRƯỜNG
@@ -254,7 +266,17 @@ Web demo cung cấp các tính năng sau:
 
 ## THAM KHẢO
 <a name="tham-khao"></a>
-Mã nguồn được tham khảo, tinh chỉnh và phát triển từ repository của nhóm tác giả gốc của BiM-VFI nhằm mục đích nghiên cứu và học tập, hoàn toàn không mang tính thương mại. Tham khảo repository gốc của nhóm tác giả BiM-VFI tại:
+Đồ án sử dụng mã nguồn gốc từ repository [KAIST-VICLab/BiM-VFI](https://github.com/KAIST-VICLab/BiM-VFI). Nhóm thực hiện xin gửi lời cảm ơn chân thành đến các tác giả.
 
-[https://github.com/KAIST-VICLab/BiM-VFI](https://github.com/KAIST-VICLab/BiM-VFI)
+Mã nguồn được tham khảo, tinh chỉnh và phát triển nhằm mục đích nghiên cứu khoa học và học tập, làm đồ án, hoàn toàn không mang tính thương mại.
+
+Nếu sử dụng mã nguồn này cho nghiên cứu, vui lòng trích dẫn bài báo gốc:
+
+```bibtex
+@inproceedings{seo2025bimvfi,
+  title={BiM-VFI: Bilateral Motion Field-Guided Video Frame Interpolation for Non-Uniform Motions},
+  author={Seo, Wonyong and Oh, Jihyong and Kim, Munchurl},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year={2025}
+}
 
