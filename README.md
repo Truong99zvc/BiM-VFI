@@ -51,7 +51,7 @@
 > *Tác giả: Wonyong Seo, Jihyong Oh, Munchurl Kim*
 
 **Đóng góp của nhóm sinh viên:**
-1.  **Tái lập huấn luyện (Reproducibility):** Huấn luyện lại mô hình từ đầu trên GPU giới hạn (GTX 1650) để kiểm chứng kết quả trong bài báo.
+1.  **Tái lập huấn luyện (Reproducibility):** Huấn luyện lại mô hình từ đầu trên GPU giới hạn (GTX 1650) và GPU T4x2 free của kaggle để kiểm chứng kết quả trong bài báo.
 2.  **Khắc phục lỗi tương thích:** Chỉnh sửa mã nguồn để hoạt động ổn định trên các môi trường mới (Torch mới, CUDA mới) và sửa các lỗi đặc thù trên Windows (đường dẫn, thư viện OpenMP).
 3.  **Phát triển Ứng dụng:** Xây dựng thêm module **Web Demo** (Flask) cho phép người dùng tương tác trực quan với mô hình.
 4.  **Tài liệu hóa:** Việt hóa và chi tiết hóa tài liệu hướng dẫn sử dụng.
@@ -98,8 +98,7 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 ```
 Biến môi trường này giải quyết lỗi "OMP: Error #15: Initializing libiomp5md.dll, but found libiomp5md.dll already initialized" có thể xảy ra khi nhiều bản sao của runtime OpenMP được liên kết vào chương trình. Đây là vấn đề phổ biến trên hệ thống Windows khi sử dụng các thư viện như NumPy, PyTorch và OpenCV cùng nhau.
 
-### Cấu hình đường dẫn tuyệt đối (Rất quan trọng)
-**Điều này rất quan trọng để chạy code thành công!**
+### Cấu hình đường dẫn tuyệt đối
 
 Sau khi clone repository, **bắt buộc** phải sửa đổi đường dẫn dataset và model trong các file cấu hình nằm trong thư mục `cfgs/`. Các đường dẫn tương đối mặc định sẽ không hoạt động và cần được thay đổi thành **đường dẫn tuyệt đối** tương ứng với hệ thống cục bộ.
 
