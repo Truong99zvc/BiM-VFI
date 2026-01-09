@@ -13,7 +13,7 @@
 ## Cài đặt
 
 ### 1. Chuẩn bị môi trường gốc
-Trước tiên, hãy đảm bảo bạn đã cài đặt môi trường `bimvfi` và các thư viện cốt lõi (PyTorch, CUDA) theo hướng dẫn tại **[README chính của dự án](../README.md#cai-dat-moi-truong)**.
+Trước tiên, hãy đảm bảo đã cài đặt môi trường `bimvfi` và các thư viện cốt lõi (PyTorch, CUDA) theo hướng dẫn tại **[README chính của dự án](../README.md#cai-dat-moi-truong)**.
 
 ### 2. Cài đặt thư viện Web
 Kích hoạt môi trường và cài thêm các gói cần thiết cho giao diện web:
@@ -57,7 +57,7 @@ web_demo/
 ## Khắc phục sự cố thường gặp
 
 *   **Lỗi "ModuleNotFoundError"**:
-    *   Đảm bảo bạn đã `conda activate bimvfi` trước khi chạy `python app.py`.
+    *   Đảm bảo đã chạy `conda activate bimvfi` trước khi chạy `python app.py`.
     *   Đảm bảo đang đứng đúng thư mục `web_demo` (hoặc cấu hình đường dẫn import đúng trong code).
 
 *   **Lỗi CUDA Out of Memory**:
