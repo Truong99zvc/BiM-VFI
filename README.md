@@ -46,7 +46,7 @@
 <a name="do-an"></a>
 **Tên đồ án**: BiM-VFI - NỘI SUY KHUNG HÌNH VIDEO DỰA TRÊN TRƯỜNG CHUYỂN ĐỘNG HAI CHIỀU
 
-Repository này chứa mã nguồn cài đặt của BiM-VFI, một phương pháp nội suy khung hình video được hướng dẫn bởi trường chuyển động hai chiều dành cho video có chuyển động không đồng nhất.  Dự án dựa trên bài báo CVPR 2025 của Wonyong Seo, Jihyong Oh và Munchurl Kim. Repository này sử dụng code gốc của nhóm tác giả đồng thời chỉnh sửa một số thiết lập về cấu hình, phiên bản,... để phù hợp tương thích đa số các thiết bị ở thời điểm hiện tại. Ngoài ra, nhóm cũng bổ sung thêm chức năng web demo để chạy thử mô hình như 1 ứng dụng.
+Repository này chứa mã nguồn cài đặt của BiM-VFI, một phương pháp nội suy khung hình video được hướng dẫn bởi trường chuyển động hai chiều dành cho video có chuyển động không đồng nhất.  Dự án dựa trên bài báo CVPR 2025 của Wonyong Seo, Jihyong Oh và Munchurl Kim. Repository này sử dụng code gốc của nhóm tác giả đồng thời chỉnh sửa một số thiết lập về cấu hình, phiên bản,... để phù hợp tương thích đa số các thiết bị ở thời điểm hiện tại để thực hiện quá trình reproduce dễ dàng hơn và tránh lỗi, xung đột. Ngoài ra, nhóm cũng bổ sung thêm chức năng web demo để chạy thử mô hình như 1 ứng dụng.
 
 ## CÀI ĐẶT MÔI TRƯỜNG
 <a name="cai-dat-moi-truong"></a>
@@ -56,7 +56,7 @@ Trước khi thiết lập môi trường, hãy đảm bảo bạn đã cài đ�
 - [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (Khuyên dùng - nhẹ)
 - [Anaconda](https://www.anaconda.com/products/distribution) (Bản đầy đủ)
 
-### Thiết lập môi trường
+### Thiết lập môi trường và cài đặt thư viện
 
 > **Lưu ý quan trọng**: Các phiên bản thư viện trong repository này khác với repository gốc của BiM-VFI. Vì quá trình tái lập huấn luyện (reproduce) của chúng tôi được thực hiện trên **GTX 1650**, chúng tôi sử dụng phiên bản PyTorch mới nhất hỗ trợ CUDA 13.0 (`torch torchvision --index-url https://download.pytorch.org/whl/cu130`) để tối ưu hóa khả năng tương thích.
 
@@ -74,7 +74,7 @@ conda install cupy -c conda-forge
 pip install flask werkzeug pillow scikit-image
 ```
 
-**Lưu ý**: `opencv-python` và `torch` đã được bao gồm trong thiết lập môi trường chính ở trên.
+**Lưu ý**: `opencv-python` và `torch` đã được bao gồm trong thiết lập môi trường chính ở trên. Hãy đảm bảo đã cài đặt đầy đủ trong quá trình thiết lập môi trường để tránh lỗi.
 
 ## LƯU Ý CẤU HÌNH QUAN TRỌNG
 <a name="luu-y-cau-hinh-quan-trong"></a>
