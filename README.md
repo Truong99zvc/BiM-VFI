@@ -13,6 +13,7 @@
 * [Students](#students)
 * [Project](#project)
 * [Environment Setting](#environment-setting)
+* [Important Configuration Notes](#important-configuration-notes)
 * [Dataset](#dataset)
 * [Pretrained Model](#pretrained-model)
 * [Evaluation](#evaluation)
@@ -20,6 +21,7 @@
 * [Demo](#demo)
   - [Command Line Demo](#command-line-demo)
   - [Web Demo](#web-demo)
+* [Kaggle Notebook](#kaggle-notebook)
 * [License](#license)
 
 ## COURSE INTRODUCTION
@@ -50,12 +52,20 @@ This repository contains the implementation of BiM-VFI, a bidirectional motion f
 
 ## ENVIRONMENT SETTING
 <a name="environment-setting"></a>
-To run this project, you need to set up your environment as follows:
+
+### Prerequisites
+Before setting up the environment, make sure you have **Conda** installed on your system. You can download and install Conda from:
+- [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (Recommended - lightweight)
+- [Anaconda](https://www.anaconda.com/products/distribution) (Full distribution)
+
+### Environment Setup
+
+> **⚠️ Important Note**: The library versions in this repository differ from the original BiM-VFI repository. Since our training was conducted on **GTX 1650**, we use the latest PyTorch version with CUDA 13.0 support (`torch torchvision --index-url https://download.pytorch.org/whl/cu130`) for optimal compatibility.
 
 ```bash
 conda create -n bimvfi python=3.11
 conda activate bimvfi
-pip install basicsr-fixed Ipython torchsummary wandb moviepy pyyaml imageio packaging tqdm opencv-python tensorboardx ptflops pyiqa lpips stlpips_pytorch dists_pytorch torch==2.4.1 torchvision==0.19.1
+pip install basicsr-fixed Ipython torchsummary moviepy pyyaml imageio packaging tqdm opencv-python tensorboardx ptflops pyiqa lpips stlpips_pytorch dists_pytorch torch torchvision --index-url https://download.pytorch.org/whl/cu130
 conda install cupy -c conda-forge
 ```
 
@@ -68,6 +78,50 @@ pip install flask werkzeug pillow scikit-image
 
 **Note**: `opencv-python` and `torch` are already included in the main environment setup above.
 
+## IMPORTANT CONFIGURATION NOTES
+<a name="important-configuration-notes"></a>
+
+### KMP_DUPLICATE_LIB_OK Environment Variable
+In `main.py`, we added the following line that is not present in the original repository:
+```python
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+```
+This environment variable resolves the "OMP: Error #15: Initializing libiomp5md.dll, but found libiomp5md.dll already initialized" error that can occur when multiple copies of the OpenMP runtime are linked into the program. This is a common issue on Windows systems when using libraries like NumPy, PyTorch, and OpenCV together.
+
+### Absolute Path Configuration (Critical)
+**⚠️ This is crucial for running the code successfully!**
+
+After cloning the repository, you **must** modify the dataset and model paths in the configuration files located in the `cfgs/` directory. The default relative paths will not work and need to be changed to **absolute paths** corresponding to your local system.
+
+#### For Training (`cfgs/bim_vfi_train_new.yaml`):
+Change the dataset path from relative to absolute:
+```yaml
+# Before (will NOT work)
+root_path: ./data/vimeo_triplet
+
+# After (example - adjust to your actual path)
+root_path: C:/Users/YourUsername/BiM-VFI/data/vimeo_triplet
+```
+
+#### For Evaluation (`cfgs/bim_vfi_benchmark.yaml`):
+1. **Model path** - Change `resume` to absolute path:
+```yaml
+# Before
+resume: ./save/train_new__400_epochs_NEW/checkpoints/model_best.pth
+
+# After (example)
+resume: C:/Users/YourUsername/BiM-VFI/save/train_new__400_epochs_NEW/checkpoints/model_best.pth
+```
+
+2. **Dataset path** - Change `root_path` to absolute path:
+```yaml
+# Before
+root_path: ./data/vimeo_triplet
+
+# After (example)
+root_path: C:/Users/YourUsername/BiM-VFI/data/vimeo_triplet
+```
+
 ## DATASET
 <a name="dataset"></a>
 ### Download
@@ -79,16 +133,53 @@ After downloading the dataset, organize it according to the project structure. T
 
 ## PRETRAINED MODEL
 <a name="pretrained-model"></a>
-Pre-trained model can be downloaded from [here](https://drive.google.com/file/d/18Wre7XyRtu_wtFRzcsit6oNfHiFRt9vC/view?usp=sharing).
 
-Place the downloaded model file (`bim_vfi.pth`) in the `pretrained` directory.
+This repository includes two models:
+
+### 1. Original Pretrained Model (from Paper)
+- **Path**: `pretrained/bim_vfi.pth`
+- **Description**: This is the original pretrained model from the BiM-VFI paper. It is already included in this repository.
+
+### 2. Our Retrained Model
+- **Path**: `save/train_new__400_epochs_NEW/checkpoints/model_best.pth`
+- **Description**: This model was retrained by our team from scratch on the Vimeo Triplet dataset. The training was configured for 400 epochs but **early stopped at epoch 330** due to convergence.
+
+### Directory Structure
+```
+BiM-VFI/
+├── pretrained/
+│   └── bim_vfi.pth                    # Original paper's pretrained model
+└── save/
+    ├── eval_pretrained_model/         # Evaluation results of pretrained model
+    │   └── logs/
+    │       └── log_benchmark_['vimeo']_[['test']].txt
+    ├── eval_train_330_epochs/         # Evaluation results of our retrained model
+    │   └── logs/
+    │       └── log_benchmark_['vimeo']_[['test']].txt
+    └── train_new__400_epochs_NEW/     # Our retrained model
+        └── checkpoints/
+            └── model_best.pth         # Best model (early stopped at epoch 330)
+```
 
 ## EVALUATION
 <a name="evaluation"></a>
+
+### Evaluation Results
+The `save/` directory contains evaluation results for both models:
+
+#### 1. Pretrained Model Evaluation
+- **Location**: `save/eval_pretrained_model/logs/log_benchmark_['vimeo']_[['test']].txt`
+- **Description**: Contains benchmark results (PSNR, SSIM, LPIPS, STLPIPS, NIQE) of the **original pretrained model** from the paper, evaluated on the Vimeo Triplet test set.
+
+#### 2. Retrained Model Evaluation
+- **Location**: `save/eval_train_330_epochs/logs/log_benchmark_['vimeo']_[['test']].txt`
+- **Description**: Contains benchmark results (PSNR, SSIM, LPIPS, STLPIPS, NIQE) of **our retrained model** (trained for 330 epochs), evaluated on the Vimeo Triplet test set.
+
+### Running Evaluation
 Desired evaluation can be done by replacing `benchmark_dataset` section in `cfgs/bim_vfi_benchmark.yaml`.
 * `name`: Name of benchmark datasets. The datasets that can be benchmarked are [_vimeo_, _vimeo\_septuplet_, _snu\_film_, _snu\_film\_arb_, _xtest_].
 * `args`:
-  * `root_path`: Path of each dataset.
+  * `root_path`: Path of each dataset. **Must be absolute path!**
   * `split`: Desired splits to evaluate. [_test_, _val_] for _vimeo_ and _vimeo\_septuplet_, [(_easy_), _medium_, _hard_, _extreme_] for _snu\_film_ and _snu\_film\_arb_, and [_single_, _multiple_] for _xtest_.
   * `pyr_lvl`: 3 for vimeo, 5 for snu_film, and 7 for xtest.
 * `save_imgs`: `True` if you want to save interpolation results, else `False`. It takes much more time to save images.
@@ -100,20 +191,13 @@ python main.py --cfg cfgs/bim_vfi_benchmark.yaml
 
 ## TRAINING
 <a name="training"></a>
-For single GPU training,
+
+To train the model:
 ```bash
-python main.py --cfg cfgs/bim_vfi.yaml
+python main.py --cfg cfgs/bim_vfi_train_new.yaml
 ```
 
-For multiple GPU training with GPU number 0, 1, 2, 3,
-```bash
-CUDA_VISIBLE_DEVICES=0,1,2,3 torchrun --nproc_per_node 4 main.py --cfg cfgs/bim_vfi.yaml
-```
-
-To run with wandb, fill in wandb.yaml and run with
-```bash
-python main.py --cfg cfgs/bim_vfi.yaml -w
-```
+**Note**: Make sure to configure the absolute paths in `cfgs/bim_vfi_train_new.yaml` before running (see [Important Configuration Notes](#important-configuration-notes)).
 
 ## DEMO
 <a name="demo"></a>
@@ -160,6 +244,15 @@ The web demo provides the following features:
 - **Customizable Parameters**: Adjust the number of interpolated frames and output FPS
 
 **Note**: Make sure you have installed all the required libraries mentioned in the [Environment Setting](#environment-setting) section, including the additional libraries for web demo (Flask, werkzeug, Pillow, scikit-image).
+
+## KAGGLE NOTEBOOK
+<a name="kaggle-notebook"></a>
+
+For users **without a GPU** or those who want to train/evaluate the model on cloud resources, we provide a Kaggle notebook:
+
+> 🔗 **Kaggle Notebook**: [https://www.kaggle.com/code/truong9/bim-vfi?scriptVersionId=289083440](https://www.kaggle.com/code/truong9/bim-vfi?scriptVersionId=289083440)
+
+**Note**: When using the Kaggle notebook, you will also need to adjust some configurations in the YAML files to match the Kaggle environment paths (e.g., `/kaggle/input/` for datasets).
 
 ## LICENSE
 <a name="license"></a>
