@@ -55,7 +55,7 @@
 **Tên đồ án**: BiM-VFI - NỘI SUY KHUNG HÌNH VIDEO DỰA TRÊN TRƯỜNG CHUYỂN ĐỘNG HAI CHIỀU
 
 **Dự án này là kết quả của quá trình tái lập (reproduce) và phát triển ứng dụng dựa trên nghiên cứu:**
-> **BiM-VFI: Bilateral Motion Field-Guided Video Frame Interpolation for Non-Uniform Motions (CVPR 2025)**
+> **BiM-VFI: Bidirectional Motion Field-Guided Frame Interpolation for Video with Non-uniform Motions**
 > *Tác giả: Wonyong Seo, Jihyong Oh, Munchurl Kim*
 
 **Đóng góp của nhóm sinh viên:**
