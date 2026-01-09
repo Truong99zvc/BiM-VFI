@@ -5,62 +5,62 @@
 </p>
 
 <!-- Title -->
-<h1 align="center"><b>CS420.Q12 - SELECTED TOPICS IN COMPUTER VISION</b></h1>
+<h1 align="center"><b>CS420.Q12 - CÁC CHỦ ĐỀ CHỌN LỌC TRONG THỊ GIÁC MÁY TÍNH</b></h1>
 
-## TABLE OF CONTENTS
-* [Course Introduction](#course-introduction)
-* [Instructor](#instructor)
-* [Students](#students)
-* [Project](#project)
-* [Environment Setting](#environment-setting)
-* [Important Configuration Notes](#important-configuration-notes)
-* [Dataset](#dataset)
-* [Pretrained Model](#pretrained-model)
-* [Evaluation](#evaluation)
-* [Training](#training)
+## MỤC LỤC
+* [Giới thiệu môn học](#gioi-thieu-mon-hoc)
+* [Giảng viên hướng dẫn](#giang-vien-huong-dan)
+* [Sinh viên thực hiện](#sinh-vien-thuc-hien)
+* [Đồ án](#do-an)
+* [Cài đặt môi trường](#cai-dat-moi-truong)
+* [Lưu ý cấu hình quan trọng](#luu-y-cau-hinh-quan-trong)
+* [Dữ liệu](#du-lieu)
+* [Mô hình huấn luyện sẵn](#mo-hinh-huan-luyen-san)
+* [Đánh giá](#danh-gia)
+* [Huấn luyện](#huan-luyen)
 * [Demo](#demo)
-  - [Command Line Demo](#command-line-demo)
+  - [Demo dòng lệnh](#demo-dong-lenh)
   - [Web Demo](#web-demo)
 * [Kaggle Notebook](#kaggle-notebook)
-* [License](#license)
+* [Giấy phép](#giay-phep)
 
-## COURSE INTRODUCTION
-<a name="course-introduction"></a>
-* **Course Name**: Selected Topics in Computer Vision
-* **Course Code**: CS420
-* **Class Code**: CS420.Q12
-* **Academic Year**: 2025 - 2026
-* **Start Date**: September 8, 2025
-* **End Date**: December 27, 2025
+## GIỚI THIỆU MÔN HỌC
+<a name="gioi-thieu-mon-hoc"></a>
+* **Tên môn học**: Các chủ đề chọn lọc trong Thị giác máy tính (Selected Topics in Computer Vision)
+* **Mã môn học**: CS420
+* **Mã lớp**: CS420.Q12
+* **Năm học**: 2025 - 2026
+* **Ngày bắt đầu**: 8 tháng 9, 2025
+* **Ngày kết thúc**: 27 tháng 12, 2025
 
-## INSTRUCTOR
-<a name="instructor"></a>
+## GIẢNG VIÊN HƯỚNG DẪN
+<a name="giang-vien-huong-dan"></a>
 * **TS. Mai Tiến Dũng** - *dungmt@uit.edu.vn*
 
-## STUDENTS
-<a name="students"></a>
-| Student ID | Name                | Github                                               | Email                   |
+## SINH VIÊN THỰC HIỆN
+<a name="sinh-vien-thuc-hien"></a>
+| MSSV | Họ và tên | Github | Email |
 |:----------:|:-------------------:|:----------------------------------------------------:|:-----------------------:|
 | 22521587   | Trương Phúc Trường  | [Truong99zvc](https://github.com/Truong99zvc/)      | 22521587@gm.uit.edu.vn  |
 | 22521571   | Võ Đình Trung       | [votrung654](https://github.com/votrung654/)         | 22521571@gm.uit.edu.vn  |
 
-## PROJECT
-<a name="project"></a>
-**Project Name**: BiM-VFI: BIDIRECTIONAL MOTION FIELD-GUIDED FRAME INTERPOLATION FOR VIDEO
+## ĐỒ ÁN
+<a name="do-an"></a>
+**Tên đồ án**: BiM-VFI: NỘI SUY KHUNG HÌNH VIDEO DỰA TRÊN TRƯỜNG CHUYỂN ĐỘNG HAI CHIỀU
 
-This repository contains the implementation of BiM-VFI, a bidirectional motion field-guided frame interpolation method for video with non-uniform motions. The project is based on the CVPR 2025 paper by Wonyong Seo, Jihyong Oh, and Munchurl Kim.
+Repository này chứa mã nguồn cài đặt của BiM-VFI, một phương pháp nội suy khung hình video được hướng dẫn bởi trường chuyển động hai chiều dành cho video có chuyển động không đồng nhất. Dự án dựa trên bài báo CVPR 2025 của Wonyong Seo, Jihyong Oh và Munchurl Kim.
 
-## ENVIRONMENT SETTING
-<a name="environment-setting"></a>
+## CÀI ĐẶT MÔI TRƯỜNG
+<a name="cai-dat-moi-truong"></a>
 
-### Prerequisites
-Before setting up the environment, make sure you have **Conda** installed on your system. You can download and install Conda from:
-- [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (Recommended - lightweight)
-- [Anaconda](https://www.anaconda.com/products/distribution) (Full distribution)
+### Yêu cầu tiên quyết
+Trước khi thiết lập môi trường, hãy đảm bảo bạn đã cài đặt **Conda** trên hệ thống của mình. Bạn có thể tải xuống và cài đặt Conda từ:
+- [Miniconda](https://docs.conda.io/en/latest/miniconda.html) (Khuyên dùng - nhẹ)
+- [Anaconda](https://www.anaconda.com/products/distribution) (Bản đầy đủ)
 
-### Environment Setup
+### Thiết lập môi trường
 
-> **⚠️ Important Note**: The library versions in this repository differ from the original BiM-VFI repository. Since our training was conducted on **GTX 1650**, we use the latest PyTorch version with CUDA 13.0 support (`torch torchvision --index-url https://download.pytorch.org/whl/cu130`) for optimal compatibility.
+> **⚠️ Lưu ý quan trọng**: Các phiên bản thư viện trong repository này khác với repository gốc của BiM-VFI. Vì quá trình huấn luyện của chúng tôi được thực hiện trên **GTX 1650**, chúng tôi sử dụng phiên bản PyTorch mới nhất hỗ trợ CUDA 13.0 (`torch torchvision --index-url https://download.pytorch.org/whl/cu130`) để tối ưu hóa khả năng tương thích.
 
 ```bash
 conda create -n bimvfi python=3.11
@@ -69,143 +69,143 @@ pip install basicsr-fixed Ipython torchsummary moviepy pyyaml imageio packaging 
 conda install cupy -c conda-forge
 ```
 
-### Additional Libraries for Web Demo
-To run the web demo, you need to install the following additional libraries:
+### Thư viện bổ sung cho Web Demo
+Để chạy web demo, bạn cần cài đặt thêm các thư viện sau:
 
 ```bash
 pip install flask werkzeug pillow scikit-image
 ```
 
-**Note**: `opencv-python` and `torch` are already included in the main environment setup above.
+**Lưu ý**: `opencv-python` và `torch` đã được bao gồm trong thiết lập môi trường chính ở trên.
 
-## IMPORTANT CONFIGURATION NOTES
-<a name="important-configuration-notes"></a>
+## LƯU Ý CẤU HÌNH QUAN TRỌNG
+<a name="luu-y-cau-hinh-quan-trong"></a>
 
-### KMP_DUPLICATE_LIB_OK Environment Variable
-In `main.py`, we added the following line that is not present in the original repository:
+### Biến môi trường KMP_DUPLICATE_LIB_OK
+Trong `main.py`, chúng tôi đã thêm dòng sau không có trong repository gốc:
 ```python
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 ```
-This environment variable resolves the "OMP: Error #15: Initializing libiomp5md.dll, but found libiomp5md.dll already initialized" error that can occur when multiple copies of the OpenMP runtime are linked into the program. This is a common issue on Windows systems when using libraries like NumPy, PyTorch, and OpenCV together.
+Biến môi trường này giải quyết lỗi "OMP: Error #15: Initializing libiomp5md.dll, but found libiomp5md.dll already initialized" có thể xảy ra khi nhiều bản sao của runtime OpenMP được liên kết vào chương trình. Đây là vấn đề phổ biến trên hệ thống Windows khi sử dụng các thư viện như NumPy, PyTorch và OpenCV cùng nhau.
 
-### Absolute Path Configuration (Critical)
-**⚠️ This is crucial for running the code successfully!**
+### Cấu hình đường dẫn tuyệt đối (Rất quan trọng)
+**⚠️ Điều này rất quan trọng để chạy code thành công!**
 
-After cloning the repository, you **must** modify the dataset and model paths in the configuration files located in the `cfgs/` directory. The default relative paths will not work and need to be changed to **absolute paths** corresponding to your local system.
+Sau khi clone repository, bạn **bắt buộc** phải sửa đổi đường dẫn dataset và model trong các file cấu hình nằm trong thư mục `cfgs/`. Các đường dẫn tương đối mặc định sẽ không hoạt động và cần được thay đổi thành **đường dẫn tuyệt đối** tương ứng với hệ thống cục bộ của bạn.
 
-#### For Training (`cfgs/bim_vfi_train_new.yaml`):
-Change the dataset path from relative to absolute:
+#### Cho huấn luyện (`cfgs/bim_vfi_train_new.yaml`):
+Thay đổi đường dẫn dataset từ tương đối sang tuyệt đối:
 ```yaml
-# Before (will NOT work)
+# Trước (sẽ KHÔNG hoạt động)
 root_path: ../data/vimeo_triplet
 
-# After (example - adjust to your actual path)
+# Sau (ví dụ - điều chỉnh theo đường dẫn thực tế của bạn)
 root_path: C:/Users/YourUsername/BiM-VFI/data/vimeo_triplet
 ```
 
-#### For Evaluation (`cfgs/bim_vfi_benchmark.yaml`):
-1. **Model path** - Change `resume` to absolute path:
+#### Cho đánh giá (`cfgs/bim_vfi_benchmark.yaml`):
+1. **Đường dẫn model** - Thay đổi `resume` thành đường dẫn tuyệt đối:
 ```yaml
-# Before
+# Trước
 resume: ./save/train_new__400_epochs_NEW/checkpoints/model_best.pth
 
-# After (example)
+# Sau (ví dụ)
 resume: C:/Users/YourUsername/BiM-VFI/save/train_new__400_epochs_NEW/checkpoints/model_best.pth
 ```
 
-2. **Dataset path** - Change `root_path` to absolute path:
+2. **Đường dẫn dataset** - Thay đổi `root_path` thành đường dẫn tuyệt đối:
 ```yaml
-# Before
+# Trước
 root_path: ../data/vimeo_triplet
 
-# After (example)
+# Sau (ví dụ)
 root_path: C:/Users/YourUsername/BiM-VFI/data/vimeo_triplet
 ```
 
-## DATASET
-<a name="dataset"></a>
-### Download
-You can download the Vimeo90K dataset used for training and testing from the following link:
+## DỮ LIỆU
+<a name="du-lieu"></a>
+### Tải xuống
+Bạn có thể tải xuống dataset Vimeo90K được sử dụng để huấn luyện và kiểm thử từ liên kết sau:
 > - [Vimeo90K](https://cove.thecvf.com/datasets/875)
 
-### Preparation
-After downloading the dataset, organize it according to the project structure. The dataset should be placed in the `data` directory.
+### Chuẩn bị
+Sau khi tải xuống dataset, hãy sắp xếp nó theo cấu trúc dự án. Dataset nên được đặt trong thư mục `data`.
 
-## PRETRAINED MODEL
-<a name="pretrained-model"></a>
+## MÔ HÌNH HUẤN LUYỆN SẴN
+<a name="mo-hinh-huan-luyen-san"></a>
 
-This repository includes two models:
+Repository này bao gồm hai model:
 
-### 1. Original Pretrained Model (from Paper)
-- **Path**: `pretrained/bim_vfi.pth`
-- **Description**: This is the original pretrained model from the BiM-VFI paper. It is already included in this repository.
+### 1. Pretrained Model Gốc (từ Paper)
+- **Đường dẫn**: `pretrained/bim_vfi.pth`
+- **Mô tả**: Đây là pretrained model gốc từ bài báo BiM-VFI. Nó đã được bao gồm trong repository này.
 
-### 2. Our Retrained Model
-- **Path**: `save/train_new__400_epochs_NEW/checkpoints/model_best.pth`
-- **Description**: This model was retrained by our team from scratch on the Vimeo Triplet dataset. The training was configured for 400 epochs but **early stopped at epoch 330** due to convergence.
+### 2. Model Được Huấn Luyện Lại Của Chúng Tôi
+- **Đường dẫn**: `save/train_new__400_epochs_NEW/checkpoints/model_best.pth`
+- **Mô tả**: Model này được nhóm chúng tôi huấn luyện lại từ đầu trên dataset Vimeo Triplet. Quá trình huấn luyện được cấu hình cho 400 epoch nhưng **đã dừng sớm ở epoch 330** do hội tụ.
 
-### Directory Structure
+### Cấu trúc thư mục
 ```
 BiM-VFI/
 ├── pretrained/
-│   └── bim_vfi.pth                    # Original paper's pretrained model
+│   └── bim_vfi.pth                    # Pretrained model gốc của bài báo
 └── save/
-    ├── eval_pretrained_model/         # Evaluation results of pretrained model
+    ├── eval_pretrained_model/         # Kết quả đánh giá của pretrained model
     │   └── logs/
     │       └── log_benchmark_['vimeo']_[['test']].txt
-    ├── eval_train_330_epochs/         # Evaluation results of our retrained model
+    ├── eval_train_330_epochs/         # Kết quả đánh giá của model huấn luyện lại
     │   └── logs/
     │       └── log_benchmark_['vimeo']_[['test']].txt
-    └── train_new__400_epochs_NEW/     # Our retrained model
+    └── train_new__400_epochs_NEW/     # Model được huấn luyện lại của chúng tôi
         └── checkpoints/
-            └── model_best.pth         # Best model (early stopped at epoch 330)
+            └── model_best.pth         # Model tốt nhất (dừng sớm ở epoch 330)
 ```
 
-## EVALUATION
-<a name="evaluation"></a>
+## ĐÁNH GIÁ
+<a name="danh-gia"></a>
 
-### Evaluation Results
-The `save/` directory contains evaluation results for both models:
+### Kết quả đánh giá
+Thư mục `save/` chứa kết quả đánh giá cho cả hai model:
 
-#### 1. Pretrained Model Evaluation
-- **Location**: `save/eval_pretrained_model/logs/log_benchmark_['vimeo']_[['test']].txt`
-- **Description**: Contains benchmark results (PSNR, SSIM, LPIPS, STLPIPS, NIQE) of the **original pretrained model** from the paper, evaluated on the Vimeo Triplet test set.
+#### 1. Đánh giá Pretrained Model
+- **Vị trí**: `save/eval_pretrained_model/logs/log_benchmark_['vimeo']_[['test']].txt`
+- **Mô tả**: Chứa kết quả benchmark (PSNR, SSIM, LPIPS, STLPIPS, NIQE) của **pretrained model gốc** từ bài báo, được đánh giá trên tập test Vimeo Triplet.
 
-#### 2. Retrained Model Evaluation
-- **Location**: `save/eval_train_330_epochs/logs/log_benchmark_['vimeo']_[['test']].txt`
-- **Description**: Contains benchmark results (PSNR, SSIM, LPIPS, STLPIPS, NIQE) of **our retrained model** (trained for 330 epochs), evaluated on the Vimeo Triplet test set.
+#### 2. Đánh giá Retrained Model
+- **Vị trí**: `save/eval_train_330_epochs/logs/log_benchmark_['vimeo']_[['test']].txt`
+- **Mô tả**: Chứa kết quả benchmark (PSNR, SSIM, LPIPS, STLPIPS, NIQE) của **model được huấn luyện lại của chúng tôi** (huấn luyện trong 330 epoch), được đánh giá trên tập test Vimeo Triplet.
 
-### Running Evaluation
-Desired evaluation can be done by replacing `benchmark_dataset` section in `cfgs/bim_vfi_benchmark.yaml`.
-* `name`: Name of benchmark datasets. The datasets that can be benchmarked are [_vimeo_, _vimeo\_septuplet_, _snu\_film_, _snu\_film\_arb_, _xtest_].
+### Chạy đánh giá
+Việc đánh giá mong muốn có thể được thực hiện bằng cách thay thế phần `benchmark_dataset` trong `cfgs/bim_vfi_benchmark.yaml`.
+* `name`: Tên của các dataset benchmark. Các dataset có thể benchmark là [_vimeo_, _vimeo\_septuplet_, _snu\_film_, _snu\_film\_arb_, _xtest_].
 * `args`:
-  * `root_path`: Path of each dataset. **Must be absolute path!**
-  * `split`: Desired splits to evaluate. [_test_, _val_] for _vimeo_ and _vimeo\_septuplet_, [(_easy_), _medium_, _hard_, _extreme_] for _snu\_film_ and _snu\_film\_arb_, and [_single_, _multiple_] for _xtest_.
-  * `pyr_lvl`: 3 for vimeo, 5 for snu_film, and 7 for xtest.
-* `save_imgs`: `True` if you want to save interpolation results, else `False`. It takes much more time to save images.
+  * `root_path`: Đường dẫn của từng dataset. **Phải là đường dẫn tuyệt đối!**
+  * `split`: Các split mong muốn để đánh giá. [_test_, _val_] cho _vimeo_ và _vimeo\_septuplet_, [(_easy_), _medium_, _hard_, _extreme_] cho _snu\_film_ và _snu\_film\_arb_, và [_single_, _multiple_] cho _xtest_.
+  * `pyr_lvl`: 3 cho vimeo, 5 cho snu_film, và 7 cho xtest.
+* `save_imgs`: `True` nếu bạn muốn lưu kết quả nội suy, ngược lại là `False`. Việc lưu ảnh sẽ tốn nhiều thời gian hơn.
 
-Then, run below:
+Sau đó, chạy lệnh bên dưới:
 ```bash
 python main.py --cfg cfgs/bim_vfi_benchmark.yaml
 ```
 
-## TRAINING
-<a name="training"></a>
+## HUẤN LUYỆN
+<a name="huan-luyen"></a>
 
-To train the model:
+Để huấn luyện model:
 ```bash
 python main.py --cfg cfgs/bim_vfi_train_new.yaml
 ```
 
-**Note**: Make sure to configure the absolute paths in `cfgs/bim_vfi_train_new.yaml` before running (see [Important Configuration Notes](#important-configuration-notes)).
+**Lưu ý**: Hãy chắc chắn cấu hình đường dẫn tuyệt đối trong `cfgs/bim_vfi_train_new.yaml` trước khi chạy (xem [Lưu ý cấu hình quan trọng](#luu-y-cau-hinh-quan-trong)).
 
 ## DEMO
 <a name="demo"></a>
-### Command Line Demo
-<a name="command-line-demo"></a>
-Custom videos in multiple images or video format can be interpolated as follows.
+### Demo Dòng Lệnh
+<a name="demo-dong-lenh"></a>
+Các video tùy chỉnh ở định dạng nhiều ảnh hoặc video có thể được nội suy như sau.
 
-First, set demo root directory as follows:
+Đầu tiên, thiết lập thư mục gốc demo như sau:
   - video1.mp4 
   - video2.mp4
   - video3
@@ -214,47 +214,47 @@ First, set demo root directory as follows:
     - ...
   - ...
 
-Then, replace `root_path` in `cfgs/bim_vfi_demo.yaml` to desired data root, and run:
+Sau đó, thay thế `root_path` trong `cfgs/bim_vfi_demo.yaml` thành đường dẫn dữ liệu mong muốn, và chạy:
 ```bash
 python main.py --cfg cfgs/bim_vfi_demo.yaml
 ```
 
 ### Web Demo
 <a name="web-demo"></a>
-The project includes a web-based demo interface for easy video frame interpolation. To run the web demo:
+Dự án bao gồm một giao diện demo dựa trên web để dễ dàng nội suy khung hình video. Để chạy web demo:
 
-1. **Navigate to the web_demo directory**:
+1. **Điều hướng đến thư mục web_demo**:
    ```bash
    cd web_demo
    ```
 
-2. **Run the Flask application**:
+2. **Chạy ứng dụng Flask**:
    ```bash
    python app.py
    ```
 
-3. **Access the web interface**:
-   Open your web browser and navigate to `http://localhost:5000` (or `http://127.0.0.1:5000`)
+3. **Truy cập giao diện web**:
+   Mở trình duyệt web của bạn và truy cập `http://localhost:5000` (hoặc `http://127.0.0.1:5000`)
 
-The web demo provides the following features:
-- **Image Pair Interpolation**: Upload two images and generate interpolated frames between them
-- **Video Interpolation**: Upload a video file and interpolate frames between consecutive frames
-- **Frame Sequence Interpolation**: Upload multiple frames and interpolate between them
-- **Model Selection**: Choose between different pre-trained models (pretrained, trained_330)
-- **Customizable Parameters**: Adjust the number of interpolated frames and output FPS
+Web demo cung cấp các tính năng sau:
+- **Nội suy cặp ảnh**: Tải lên hai ảnh và tạo khung hình nội suy giữa chúng
+- **Nội suy video**: Tải lên tệp video và nội suy khung hình giữa các khung hình liên tiếp
+- **Nội suy chuỗi khung hình**: Tải lên nhiều khung hình và nội suy giữa chúng
+- **Lựa chọn Model**: Chọn giữa các model được huấn luyện trước khác nhau (pretrained, trained_330)
+- **Thông số tùy chỉnh**: Điều chỉnh số lượng khung hình nội suy và FPS đầu ra
 
-**Note**: Make sure you have installed all the required libraries mentioned in the [Environment Setting](#environment-setting) section, including the additional libraries for web demo (Flask, werkzeug, Pillow, scikit-image).
+**Lưu ý**: Hãy chắc chắn rằng bạn đã cài đặt tất cả các thư viện cần thiết được đề cập trong phần [Cài đặt môi trường](#cai-dat-moi-truong), bao gồm các thư viện bổ sung cho web demo (Flask, werkzeug, Pillow, scikit-image).
 
 ## KAGGLE NOTEBOOK
 <a name="kaggle-notebook"></a>
 
-For users **without a GPU** or those who want to train/evaluate the model on cloud resources, we provide a Kaggle notebook:
+Đối với người dùng **không có GPU** hoặc những người muốn huấn luyện/đánh giá model trên tài nguyên đám mây, chúng tôi cung cấp một Kaggle notebook:
 
 > 🔗 **Kaggle Notebook**: [https://www.kaggle.com/code/truong9/bim-vfi?scriptVersionId=289083440](https://www.kaggle.com/code/truong9/bim-vfi?scriptVersionId=289083440)
 
-**Note**: When using the Kaggle notebook, you will also need to adjust some configurations in the YAML files to match the Kaggle environment paths (e.g., `/kaggle/input/` for datasets).
+**Lưu ý**: Khi sử dụng Kaggle notebook, bạn cũng sẽ cần điều chỉnh một số cấu hình trong các tệp YAML để khớp với đường dẫn môi trường Kaggle (ví dụ: `/kaggle/input/` cho dataset).
 
-## LICENSE
-<a name="license"></a>
-The source codes including the checkpoint can be freely used for research and education only. Any commercial use should get formal permission from the principal investigator (Prof. Munchurl Kim, mkimee@kaist.ac.kr).
+## GIẤY PHÉP
+<a name="giay-phep"></a>
+Mã nguồn bao gồm checkpoint có thể được sử dụng tự do cho mục đích nghiên cứu và giáo dục. Mọi mục đích sử dụng thương mại cần phải có sự cho phép chính thức từ chủ nhiệm đề tài (GS. Munchurl Kim, mkimee@kaist.ac.kr).
 
