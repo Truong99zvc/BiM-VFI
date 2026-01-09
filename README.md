@@ -22,7 +22,7 @@
   - [Demo dòng lệnh](#demo-dong-lenh)
   - [Web Demo](#web-demo)
 * [Kaggle Notebook](#kaggle-notebook)
-* [Giấy phép](#giay-phep)
+* [Tham khảo](#tham-khao)
 
 ## GIỚI THIỆU MÔN HỌC
 <a name="gioi-thieu-mon-hoc"></a>
@@ -252,7 +252,8 @@ Web demo cung cấp các tính năng sau:
 
 **Lưu ý**: Khi sử dụng Kaggle notebook, bạn cũng sẽ cần điều chỉnh một số cấu hình trong các tệp YAML để khớp với đường dẫn môi trường Kaggle (ví dụ: `/kaggle/input/` cho dataset).
 
-## GIẤY PHÉP
-<a name="giay-phep"></a>
-Mã nguồn bao gồm checkpoint có thể được sử dụng tự do cho mục đích nghiên cứu và giáo dục. Mọi mục đích sử dụng thương mại cần phải có sự cho phép chính thức từ chủ nhiệm đề tài (GS. Munchurl Kim, mkimee@kaist.ac.kr).
+## THAM KHẢO
+<a name="tham-khao"></a>
+Mã nguồn được tham khảo, tinh chỉnh và phát triển từ repository của nhóm tác giả gốc của BiM-VFI nhằm mục đích nghiên cứu và học tập, hoàn toàn không mang tính thương mại. Tham khảo tại:
+[https://github.com/KAIST-VICLab/BiM-VFI](https://github.com/KAIST-VICLab/BiM-VFI)
 
