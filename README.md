@@ -5,7 +5,7 @@
 </p>
 
 <!-- Title -->
-<h1 align="center"><b>CS420.Q12 - CÁC CHỦ ĐỀ CHỌN LỌC TRONG THỊ GIÁC MÁY TÍNH</b></h1>
+<h1 align="center"><b>CS420.Q12 - CÁC VẤN ĐỀ CHỌN LỌC TRONG THỊ GIÁC MÁY TÍNH</b></h1>
 
 ## MỤC LỤC
 * [Giới thiệu môn học](#gioi-thieu-mon-hoc)
@@ -26,12 +26,10 @@
 
 ## GIỚI THIỆU MÔN HỌC
 <a name="gioi-thieu-mon-hoc"></a>
-* **Tên môn học**: Các chủ đề chọn lọc trong Thị giác máy tính (Selected Topics in Computer Vision)
+* **Tên môn học**: Các vấn đề chọn lọc trong Thị giác máy tính
 * **Mã môn học**: CS420
 * **Mã lớp**: CS420.Q12
 * **Năm học**: 2025 - 2026
-* **Ngày bắt đầu**: 8 tháng 9, 2025
-* **Ngày kết thúc**: 27 tháng 12, 2025
 
 ## GIẢNG VIÊN HƯỚNG DẪN
 <a name="giang-vien-huong-dan"></a>
