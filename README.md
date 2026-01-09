@@ -248,13 +248,13 @@ Web demo cung cấp các tính năng sau:
 
 Đối với người dùng **có GPU không tương thích, không có GPU**, gặp các lỗi về phần cứng, thiết lập, cài đặt hoặc những người muốn huấn luyện/đánh giá model trên tài nguyên đám mây, nhóm cung cấp một Kaggle notebook (đã chạy sẵn ra log và model):
 
-> 🔗 **Kaggle Notebook**: [https://www.kaggle.com/code/truong9/bim-vfi?scriptVersionId=289083440](https://www.kaggle.com/code/truong9/bim-vfi?scriptVersionId=289083440)
+> **Kaggle Notebook**: [https://www.kaggle.com/code/truong9/bim-vfi?scriptVersionId=289083440](https://www.kaggle.com/code/truong9/bim-vfi?scriptVersionId=289083440)
 
 **Lưu ý**: Khi sử dụng Kaggle notebook, cũng sẽ cần điều chỉnh một số cấu hình trong các tệp YAML để khớp với đường dẫn môi trường Kaggle (ví dụ: `/kaggle/input/` cho dataset). Cần chọn đúng dataset Vimeo 90K-Triplet (đã có sẵn trên kaggle) và GPU phù hợp (kaggle có cho free 30 tiếng/tuần cho P100 hoặc T4x2).
 
 ## THAM KHẢO
 <a name="tham-khao"></a>
-Mã nguồn được tham khảo, tinh chỉnh và phát triển từ repository của nhóm tác giả gốc của BiM-VFI nhằm mục đích nghiên cứu và học tập, hoàn toàn không mang tính thương mại. Tham khảo tại:
+Mã nguồn được tham khảo, tinh chỉnh và phát triển từ repository của nhóm tác giả gốc của BiM-VFI nhằm mục đích nghiên cứu và học tập, hoàn toàn không mang tính thương mại. Tham khảo repository gốc của nhóm tác giả BiM-VFI tại:
 
 [https://github.com/KAIST-VICLab/BiM-VFI](https://github.com/KAIST-VICLab/BiM-VFI)
 
